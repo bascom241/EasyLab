@@ -9,6 +9,7 @@ const SampleForm3 = () => {
   >([]);
 
   const [searchItem,setSearchItem] = useState("");
+  const [selectAll, setSelectAll] = useState(false);
 
 
   console.log(selectedTests);
@@ -45,6 +46,26 @@ const SampleForm3 = () => {
     );
     setTests(result);
   };
+
+  const handleSelectAll = () => {
+    const newSelect = !selectAll;
+    setSelectAll(newSelect);
+
+    const updatedTest = tests.map(test => ({
+      ...test, checkbox:newSelect
+    }))
+    setTests(updatedTest);
+
+    if(newSelect){
+      setSelectedTests(updatedTest.map(test=> ({
+        test:test.test,
+        bgColor:test.bgColor,
+        color:test.color
+      })))
+    } else{
+      setSelectedTests([]);
+    }
+  }
   
   return (
     <div className="flex gap-4">
@@ -78,7 +99,11 @@ const SampleForm3 = () => {
         <div className="w-full flex justify-between mb-2">
           <p>All</p>
           <div className="flex gap-2">
-            <input type="checkbox" />
+            <input 
+            type="checkbox" 
+            checked={selectAll}
+            onChange={handleSelectAll}
+            />
             <p>Select all tests</p>
           </div>
         </div>
