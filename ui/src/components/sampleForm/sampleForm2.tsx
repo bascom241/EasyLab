@@ -2,17 +2,39 @@
 import React, { useState } from "react";
 import { ArrowRight } from "lucide-react";
 
+
+interface RequestersInformation {
+    requestingDoctor: string;
+    consultant: string;
+}
+
+interface FormData {
+    surName: string;
+    otherNames: string;
+    age: string;
+    gender: string;
+    hospitalNumber: string;
+    occupation: string;
+    sampleInformation: string;
+    sampleStatus: string;
+    recieptNumber: string;
+    patientType: string;
+    ward: string;
+    dateOfSpecimen:string,
+    requestersInformation: RequestersInformation;
+    testType: string[]; // Array of strings
+}
+
 type SampleForm2Props = {
     nextStep:() => void
+    handleFormChange:(e:React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void 
+    formData:FormData
+    setFormData:(data:any) => void
 }
-const SampleForm2 = ({nextStep}: SampleForm2Props) => {
+const SampleForm2:React.FC<SampleForm2Props> = ({nextStep, formData, handleFormChange,setFormData}) => {
 
 
-    const [sampleStatus, setSampleStatus] = useState("");
-
-    const handleChange = (e:any) => {
-      setSampleStatus(e.target.value);
-    };
+ 
   
     return (
         <main className="bg-white w-2/3 flex flex-col gap-2 py-3 px-6">
@@ -38,7 +60,11 @@ const SampleForm2 = ({nextStep}: SampleForm2Props) => {
                 <div className="flex gap-5 w-full">
                     <div className="flex flex-col gap-1 w-full">
                         <label htmlFor="sample" className="text-xs">Sample Type</label>
-                        <select className="bg-white px-3 py-2 border border-neutral-200 focus:outline-none focus:border-[#01368B] rounded-md cursor-pointer text-xs">
+                        <select className="bg-white px-3 py-2 border border-neutral-200 focus:outline-none focus:border-[#01368B] rounded-md cursor-pointer text-xs"
+                        value={formData.sampleInformation}
+                        name="sampleInformation"
+                        onChange={handleFormChange}
+                        >
                             <option value="blood">Blood</option>
                             <option value="plasma">Plasma</option>
                             <option value="serum">Serum</option>
@@ -48,10 +74,11 @@ const SampleForm2 = ({nextStep}: SampleForm2Props) => {
                     <div className="flex flex-col gap-1 w-full">
                         <label htmlFor="status" className="text-xs">Sample Status</label>
                         <select
-                            className={`bg-white px-3 py-2 border border-neutral-200 focus:outline-none focus:border-[#01368B] rounded-md cursor-pointer text-xs ${sampleStatus === "accepted" ? "text-green-600" : sampleStatus === "rejected" ? "text-red-600" : "text-black"
+                            className={`bg-white px-3 py-2 border border-neutral-200 focus:outline-none focus:border-[#01368B] rounded-md cursor-pointer text-xs ${formData.sampleStatus === "accepted" ? "text-green-600" : formData.sampleStatus === "rejected" ? "text-red-600" : "text-black"
                                 }`}
-                            value={sampleStatus}
-                            onChange={handleChange}
+                            value={formData.sampleStatus}
+                            onChange={handleFormChange}
+                            name="sampleStatus"
                         >
                             <option value="" disabled>Select Status</option>
                             <option value="accepted" style={{color:"green"}}>Accepted</option>
@@ -67,14 +94,31 @@ const SampleForm2 = ({nextStep}: SampleForm2Props) => {
                             id="number"
                             placeholder="3347694785w5h2"
                             className="bg-white px-3 py-2 border border-neutral-200 focus:outline-none focus:border-[#01368B] rounded-md text-xs"
+                            value={formData.recieptNumber}
+                            name="recieptNumber"
+                            onChange={handleFormChange}
+
                         />
                     </div>
                     <div className="flex flex-col gap-1 w-full">
                         <label className="text-xs">Patient Type</label>
                         <div className="flex items-center gap-1.5">
-                            <input type="radio" name="patient" id="outpatient" />
+                            <input type="radio" 
+                            id="outpatient"
+                            name="patientType"
+                            value="Out Patient"
+                            checked={formData.patientType === "Out Patient"}
+                            onChange={handleFormChange}
+                            />
                             <label htmlFor="outpatient" className="text-xs">Out Patient</label>
-                            <input type="radio" name="patient" id="inpatient" />
+                            <input
+                             type="radio"
+                             id="inpatient" 
+                             name="patientType"
+                             value="In Patient"
+                             checked={formData.patientType === "In Patient"}
+                             onChange={handleFormChange}
+                            />
                             <label htmlFor="inpatient" className="text-xs">In Patient</label>
                         </div>
                     </div>
@@ -83,7 +127,12 @@ const SampleForm2 = ({nextStep}: SampleForm2Props) => {
                 <div className="flex gap-5">
                     <div className="flex flex-col gap-1 w-full">
                         <label htmlFor="ward" className="text-xs">Ward/Clinic</label>
-                        <select className="bg-white px-3 py-2 border border-neutral-200 focus:outline-none focus:border-[#01368B] rounded-md cursor-pointer text-xs">
+                        <select className="bg-white px-3 py-2 border border-neutral-200 focus:outline-none focus:border-[#01368B] rounded-md cursor-pointer text-xs"
+                        name="ward"
+                        value={formData.ward}
+                        onChange={handleFormChange}
+
+                        >
                             <option value="femaleSurgicalWard">femaleSurgicalWard</option>
                             <option value="maleSurgicalWard">maleSurgicalWard</option>
                             <option value="ENT">ENT</option>
@@ -99,6 +148,10 @@ const SampleForm2 = ({nextStep}: SampleForm2Props) => {
                             id="date"
                             placeholder="24/12/2024"
                             className="bg-neutral-100 px-3 py-2 border border-neutral-200 focus:outline-none focus:border-[#01368B] rounded-md text-xs"
+                            value={formData.dateOfSpecimen}
+                            name="dateOfSpecimen"
+                            onChange={handleFormChange}
+                            
                         />
                     </div>
                 </div>
@@ -112,8 +165,11 @@ const SampleForm2 = ({nextStep}: SampleForm2Props) => {
                         <label htmlFor="doctor" className="text-xs">Requesting Doctor</label>
                         <input
                             id="doctor"
-                            placeholder="Doctor Akinbile"
+                            placeholder="D"
                             className="bg-neutral-100 px-3 py-2 border border-neutral-200 focus:outline-none focus:border-[#01368B] rounded-md text-xs"
+                            value={formData.requestersInformation.requestingDoctor}
+                            name="requestersInformation.requestingDoctor"
+                            onChange={handleFormChange}
                         />
                     </div>
                     <div className="flex flex-col gap-1 w-full">
@@ -122,6 +178,9 @@ const SampleForm2 = ({nextStep}: SampleForm2Props) => {
                             id="consultant"
                             placeholder="Dr Ladi"
                             className="bg-neutral-100 px-3 py-2 border border-neutral-200 focus:outline-none focus:border-[#01368B] rounded-md text-xs"
+                            value={formData.requestersInformation.consultant}
+                            name="requestersInformation.consultant"
+                            onChange={handleFormChange}
                         />
                     </div>
                 </div>

@@ -1,18 +1,48 @@
 "use client";
 import React, { useState } from "react";
+import { useEffect } from "react";
 import { DATA } from "../../data";
+import { ArrowRight } from "lucide-react";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useCreateSampleStore } from "@/store/useCreateSampleStore";
+interface RequestersInformation {
+  requestingDoctor: string;
+  consultant: string;
+}
 
-const SampleForm3 = () => {
+interface FormData {
+  surName: string;
+  otherNames: string;
+  age: string;
+  gender: string;
+  hospitalNumber: string;
+  occupation: string;
+  sampleInformation: string;
+  sampleStatus: string;
+  recieptNumber: string;
+  ward: string;
+  requestersInformation: RequestersInformation;
+  testType: string[]; // Array of strings
+}
+
+type SampleForm3Props = {
+  nextStep: () => void
+  handleFormChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
+  formData: FormData
+  setFormData: (data: any) => void
+  handleSubmit: (e: React.ChangeEvent<HTMLFormElement>) => void
+}
+const SampleForm3: React.FC<SampleForm3Props> = ({ nextStep, handleFormChange, formData, setFormData, handleSubmit }) => {
   const [tests, setTests] = useState(DATA);
   const [selectedTests, setSelectedTests] = useState<
     { test: string; bgColor: string; color: string }[]
   >([]);
 
-  const [searchItem,setSearchItem] = useState("");
+  const [searchItem, setSearchItem] = useState("");
   const [selectAll, setSelectAll] = useState(false);
 
 
-  console.log(selectedTests);
+
 
   // Toggle individual checkbox
   const handleCheckboxChange = (index: number) => {
@@ -24,21 +54,21 @@ const SampleForm3 = () => {
     const testItem = updatedTests[index];
 
 
-    if(testItem.checkbox){
-      if(!selected.find(item => item.test === testItem.test)){
+    if (testItem.checkbox) {
+      if (!selected.find(item => item.test === testItem.test)) {
         selected.push({
           test: testItem.test,
           bgColor: testItem.bgColor,
           color: testItem.color
         })
       }
-    } else{
+    } else {
       const updatedSelected = selected.filter(item => item.test !== testItem.test);
       setSelectedTests(updatedSelected);
       return;
     }
 
-  setSelectedTests(selected)
+    setSelectedTests(selected)
   };
   const handleSearchTest = () => {
     const result = DATA.filter(item =>
@@ -52,21 +82,38 @@ const SampleForm3 = () => {
     setSelectAll(newSelect);
 
     const updatedTest = tests.map(test => ({
-      ...test, checkbox:newSelect
+      ...test, checkbox: newSelect
     }))
     setTests(updatedTest);
 
-    if(newSelect){
-      setSelectedTests(updatedTest.map(test=> ({
-        test:test.test,
-        bgColor:test.bgColor,
-        color:test.color
+    if (newSelect) {
+      setSelectedTests(updatedTest.map(test => ({
+        test: test.test,
+        bgColor: test.bgColor,
+        color: test.color
       })))
-    } else{
+    } else {
       setSelectedTests([]);
     }
   }
-  
+
+  const { submitSample } = useCreateSampleStore();
+
+  const handleSampleSubmit = () => {
+   
+    submitSample(formData,nextStep);
+  }
+
+
+
+  useEffect(() => {
+    setFormData((prev: any) => ({
+      ...prev, testType: selectedTests.map(test => test.test)
+    }));
+    console.log(formData)
+  }, [selectedTests]);
+
+
   return (
     <div className="flex gap-4">
       {/* Left Side */}
@@ -84,7 +131,7 @@ const SampleForm3 = () => {
             placeholder="Search Test"
             className="w-full bg-white px-3 py-2 border border-neutral-300 focus:outline-none focus:border-[#01368B] text-xs h-full"
             value={searchItem}
-            onChange={(e)=>setSearchItem(e.target.value)}
+            onChange={(e) => setSearchItem(e.target.value)}
 
           />
           <input
@@ -99,10 +146,10 @@ const SampleForm3 = () => {
         <div className="w-full flex justify-between mb-2">
           <p>All</p>
           <div className="flex gap-2">
-            <input 
-            type="checkbox" 
-            checked={selectAll}
-            onChange={handleSelectAll}
+            <input
+              type="checkbox"
+              checked={selectAll}
+              onChange={handleSelectAll}
             />
             <p>Select all tests</p>
           </div>
@@ -113,9 +160,8 @@ const SampleForm3 = () => {
           {tests.map((item, index) => (
             <div
               key={index}
-              className={`flex items-center justify-between p-3 border border-neutral-400 ${
-                item.checkbox ? "bg-neutral-100" : "bg-white"
-              }`}
+              className={`flex items-center justify-between p-3 border border-neutral-400 ${item.checkbox ? "bg-neutral-100" : "bg-white"
+                }`}
             >
               {/* Custom Checkbox */}
               <label className="relative flex items-center cursor-pointer">
@@ -156,26 +202,46 @@ const SampleForm3 = () => {
             </div>
           ))}
         </div>
+
+
       </main>
 
       {/* Selection Summary */}
-      <div className="bg-white border-[1px] w-1/4 h-64 flex flex-col p-4 shadow-lg rounded-md">
-        <p className="text-center font-semibold text-lg mb-3">Selection Summary</p>
-        <hr className="mb-3 border-gray-300" />
-        <ul className="grid grid-cols-2 gap-1 p-1">
-          {selectedTests.map((item, index) => (
-            <li key={index}   className="text-xs font-medium px-2 py-1 rounded-full text-center">
-              <p
-                className="text-white px-4 py-2 rounded-full text-center text-sm w-full font-light shadow-md"
-                style={{ backgroundColor: item.bgColor, color: item.color }}
-              >
-                {item.test}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </div>
+
+      <main className=" flex flex-col gap-5">
+
+
+        <div className="flex items-center justify-center">
+
+
+          <div className="bg-white border-[1px] w-3/4 h-64 flex items-center flex-col p-4 shadow-lg rounded-md">
+            <p className="text-center font-semibold text-lg mb-3">Selection Summary</p>
+            <hr className="mb-3 border-gray-300" />
+            <ul className="grid grid-cols-2 gap-1 p-1">
+              {selectedTests.map((item, index) => (
+                <li key={index} className="text-xs font-medium px-2 py-1 rounded-full text-center">
+                  <p
+                    className="text-white px-4 py-2 rounded-full text-center text-sm w-full font-light shadow-md"
+                    style={{ backgroundColor: item.bgColor, color: item.color }}
+                  >
+                    {item.test}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className='w-[400px] flex items-center justify-center'>
+          <button type='button' className='bg-[#01368B] w-1/2 flex items-center justify-center gap-3 text-white p-2 rounded-md' onClick={handleSampleSubmit}>
+            <p>Continue</p>
+            <ArrowRight size={24} />
+          </button>
+        </div>
+      </main>
     </div>
+
+
   );
 };
 

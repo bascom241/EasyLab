@@ -2,10 +2,35 @@
 import React from 'react'
 import { ArrowRight } from 'lucide-react'
 
+
+
+interface RequestersInformation {
+    requestingDoctor: string;
+    consultant: string;
+}
+
+interface FormData {
+    surName: string;
+    otherNames: string;
+    age: string;
+    gender: string;
+    hospitalNumber: string;
+    occupation: string;
+    sampleInformation: string;
+    sampleStatus: string;
+    recieptNumber: string;
+    ward: string;
+    requestersInformation: RequestersInformation;
+    testType: string[]; // Array of strings
+}
+
 type SampleForm1Props = {
     nextStep:() => void
+    handleFormChange:(e:React.ChangeEvent<HTMLInputElement | HTMLSelectElement>)=> void
+   formData:FormData
+   setFormData:(data:any)=> void
 }
-const SampleForm1 = ({nextStep} : SampleForm1Props) => {
+const SampleForm1:React.FC<SampleForm1Props> = ({nextStep,handleFormChange,formData,setFormData}) => {
     return (
         <main className=' bg-white w-2/3 p-8'>
             <h1 className='font-semibold text-2xl mb-3'>Patient Details</h1>
@@ -17,6 +42,9 @@ const SampleForm1 = ({nextStep} : SampleForm1Props) => {
                             id='surname'
                             placeholder='Easy Lab'
                             className='w-full bg-neutral-100 px-4 py-2 border-[1px] focus:outline-none focus:border-[#01368B]  border-neutral-200 rounded-md cursor-pointer'
+                            value={formData.surName}
+                            name='surName'
+                            onChange={handleFormChange}
                         />
                     </div>
                     <div className='flex flex-col gap-2 w-full'>
@@ -25,6 +53,9 @@ const SampleForm1 = ({nextStep} : SampleForm1Props) => {
                             id='o'
                             placeholder='Team'
                             className='bg-neutral-100 px-4 py-2 border-[1px] focus:outline-none focus:border-[#01368B]  border-neutral-200 rounded-md cursor-pointer'
+                            value={formData.otherNames}
+                            name="otherNames"
+                            onChange={handleFormChange}
                         />
                     </div>
                 </div>
@@ -36,11 +67,17 @@ const SampleForm1 = ({nextStep} : SampleForm1Props) => {
                             id='age'
                             placeholder='32'
                             className='bg-neutral-100 px-4 py-2 border-[1px] focus:outline-none focus:border-[#01368B]  border-neutral-200 rounded-md cursor-pointer'
+                            value={formData.age}
+                            name="age"
+                            onChange={handleFormChange}
                         />
                     </div>
                     <div className='flex flex-col gap-2 w-full'>
                         <label htmlFor='surname'>Gender</label>
-                        <select 
+                        <select
+                        value={formData.gender}
+                        name="gender"
+                        onChange={handleFormChange}
                         
                         className='bg-neutral-100 px-4 py-2 border-[1px] focus:outline-none focus:border-[#01368B]  border-neutral-200 rounded-md cursor-pointer'>
                             <option value="male">male</option>
@@ -56,6 +93,9 @@ const SampleForm1 = ({nextStep} : SampleForm1Props) => {
                             id='hospital'
                             placeholder='789056789800'
                             className='bg-neutral-100 px-4 py-2 border-[1px] focus:outline-none focus:border-[#01368B]  border-neutral-200 rounded-md cursor-pointer'
+                            value={formData.hospitalNumber}
+                            name="hospitalNumber"
+                            onChange={handleFormChange}
                         />
                     </div>
                     <div className='flex flex-col gap-2 w-full'>
@@ -64,6 +104,9 @@ const SampleForm1 = ({nextStep} : SampleForm1Props) => {
                             id='occupation'
                             placeholder='Farmer'
                             className='bg-neutral-100 px-4 py-2 border-[1px] focus:outline-none focus:border-[#01368B]  border-neutral-200 rounded-md cursor-pointer'
+                            value={formData.occupation}
+                            name="occupation"
+                            onChange={handleFormChange}
                         />
                     </div>
                 </div>

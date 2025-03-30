@@ -1,9 +1,11 @@
 "use client"
-import React from 'react'
+import React, { ChangeEvent, HTMLAttributeReferrerPolicy } from 'react'
 import { useState } from 'react'
 import SampleForm1 from '@/components/sampleForm/sampleForm1'
 import SampleForm2 from '@/components/sampleForm/sampleForm2'
 import SampleForm3 from '@/components/sampleForm/sampleForm3'
+import SampleForm4 from '@/components/sampleForm/sampleForm4'
+import SampleForm5 from '@/components/sampleForm/sampleForm5'
 const RegisterSample = () => {
   const [currentState, setCurrentState] = useState(1);
   const [formData, setFormData] = useState({
@@ -17,8 +19,41 @@ const RegisterSample = () => {
     sampleStatus: "",
     recieptNumber: "",
     ward: "",
-
+    patientType: "",
+  dateOfSpecimen:"",
+    requestersInformation:{
+      requestingDoctor: "",
+        consultant: ""
+    },
+    testType:[]
   })
+
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+  
+    setFormData((prev) => {
+      const keys = name.split("."); // Handle nested fields
+  
+      if (keys.length > 1) {
+        return {
+          ...prev,
+          [keys[0]]: {
+            ...(prev[keys[0] as keyof typeof prev] as Record<string, any>), 
+            [keys[1]]: value,
+          },
+        };
+      }
+      return { ...prev, [name]: value };
+    });
+  };
+  
+
+  const handleSubmit = (e:React.ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  } 
+
   const totalSteps = 5;
 
   const nextStep = () => {
@@ -35,12 +70,34 @@ const RegisterSample = () => {
 
       {currentState === 1 && <SampleForm1
         nextStep={nextStep}
+        handleFormChange={handleFormChange}
+        formData={formData}
+        setFormData={setFormData}
       />}
       {currentState == 2 && <SampleForm2
         nextStep={nextStep}
+        handleFormChange={handleFormChange}
+        formData={formData}
+        setFormData={setFormData}
       />}
       {
-        currentState === 3 && <SampleForm3/>
+        currentState === 3 && <SampleForm3
+        nextStep={nextStep}
+        handleFormChange={handleFormChange}
+        formData={formData}      
+        setFormData={setFormData}
+        handleSubmit={handleSubmit}
+        />
+      }
+
+      {
+        currentState === 4 && <SampleForm4
+        nextStep={nextStep}
+        />
+      }
+
+      {
+        currentState === 5 && <SampleForm5/>
       }
     </main>
   )

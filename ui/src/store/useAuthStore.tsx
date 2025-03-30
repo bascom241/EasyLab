@@ -37,7 +37,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         set({isLogin:true})
         try{
             const response = await axiosInstance.post("/login", formData);
-            router.push("/home")
+            router.push("/dashboard")
             console.log(response.data.message)
            
         }catch(err){
@@ -49,7 +49,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     checkAuth: async () => {
         try {
             const response = await axiosInstance.get("/check-auth");
-            set({ authUser: response.data.user })
+            set({ authUser: response.data.user });
         } catch (err) {
             set({ checkingAuth: false });
         }

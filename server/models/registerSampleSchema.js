@@ -12,7 +12,7 @@ const registerSampleSchema = new mongoose.Schema({
         required: [true, "otherNames are required"]
     },
     age: {
-        type: Number,
+        type: String,
         required: [true, "age is required"]
     },
     gender: {
@@ -30,7 +30,7 @@ const registerSampleSchema = new mongoose.Schema({
     },
     sampleInformation: {
         type: String,
-        enum: ["blood", "stool", "swab", "urine", "csf", "sputum"],
+        enum: ["serum","plasma", "blood", "protein"],
         required: [true, "sampleInformation is required"]
     },
     sampleStatus: {
@@ -42,20 +42,28 @@ const registerSampleSchema = new mongoose.Schema({
         type: String,
         required: [true, "recieptNumber is required"]
     },
+    patientType:{
+        type:String,
+        enum: ["Out Patient","In Patient"],
+        required:[true, "patientType is required"]
+    },
     ward: {
         type: String,
         enum: ["femaleSurgicalWard", "maleSurgicalWard", "ENT", "MOPD", "A&E", "O&G", "GOPD"],
         required: true
     },
     requestersInformation: {
-        requestingNumber: { type: String, required: true },
+        requestingDoctor: { type: String, required: true },
         consultant: { type: String, required: true }
     },
     testType: {
         type: [String],
         required: [true, "testType is required"]
+    },
+    dateOfSpecimen:{
+        type:String
     }
-});
+},{timestamps:true});
 
 const RegisterSample = mongoose.model("RegisterSample", registerSampleSchema);
 export default RegisterSample;

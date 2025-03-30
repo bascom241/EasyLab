@@ -18,7 +18,7 @@ const SideBar = () => {
     const menuItems = [
         { name: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
         { name: "Register Sample", icon: UserPlus, path: "/sample" },
-        { name: "Experiments", icon: FlaskConical, path: "/experiments" },
+        { name: "Experiments", icon: FlaskConical, path: "/management" },
         { name: "Reports", icon: BarChart, path: "/reports" },
         { name: "Messages", icon: MessageSquare, path: "/messages" },
     ];
