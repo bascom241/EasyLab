@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { useCreateSampleStore } from "@/store/useCreateSampleStore";
-import { ReceiptIcon, XCircle } from "lucide-react";
+import { ReceiptIcon, XCircle } from "lucide-react"
 
 const Management = () => {
     const [page, setPage] = useState(1);
@@ -161,6 +161,10 @@ const Management = () => {
                         )}
                     </tbody>
                 </table>
+
+                <div>
+
+                </div>
             </section>
 
             {

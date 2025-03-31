@@ -1,1 +1,15 @@
 @import "tailwindcss";
+@layer utilities {
+    @media print {
+      .print\:shadow-none {
+        box-shadow: none !important;
+      }
+      .print\:w-full {
+        width: 100% !important;
+      }
+      .print\:hidden {
+        display: none !important;
+      }
+    }
+  }
+  
