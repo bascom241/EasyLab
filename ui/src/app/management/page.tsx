@@ -1,13 +1,31 @@
 "use client";
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useCreateSampleStore } from "@/store/useCreateSampleStore";
-import { ReceiptIcon, XCircle } from "lucide-react"
+import { ArrowLeft, ArrowRight, ReceiptIcon, XCircle } from "lucide-react"
+
+
 
 const Management = () => {
     const [page, setPage] = useState(1);
     const limit = 5;
     const { fetchSamples, sampleData, fetchSample, singleSampleData } = useCreateSampleStore();
     const [showModal, setShowModal] = useState(false);
+
+
+
+    const nextPage = () => {
+        if (page > 10) return
+        console.log(page)
+        setPage((prev) => prev + 1);
+    }
+
+    const prevPage = () => {
+        if (page > 1) {
+            setPage((prev) => prev - 1)
+        }
+    }
+
+
 
     const updateModal = (id: string) => {
         fetchSample(id);
@@ -34,12 +52,13 @@ const Management = () => {
 
     useEffect(() => {
         fetchSamples(page, limit, params);
-    }, [params]);
+
+    }, [page, JSON.stringify(params)]);
 
 
     return (
-        <main className="mt-16 flex flex-col w-full   h-screen gap-4 p-4">
-            <h1 className="text-2xl font-semibold text-gray-800">Management Page</h1>
+        <main className="mt-14 flex flex-col w-full   h-screen max-h-[29rem] gap-4 px-4">
+            <h1 className=" font-semibold text-gray-800">Management Page</h1>
 
             {/* Search Input */}
             <section className="w-full flex gap-3 justify-between items-center ">
@@ -114,9 +133,9 @@ const Management = () => {
 
             {/* Table Section */}
             <section className="w-full overflow-x-auto">
-                <table className="w-full border border-gray-200 shadow-md rounded-lg overflow-hidden">
-                    <thead className="bg-[#01368B] text-white text-sm uppercase">
-                        <tr>
+                <table className="w-full border-2 border-gray-950 border-collapse shadow-md rounded-lg overflow-hidden">
+                    <thead className="bg-neutral-400 text-white text-sm uppercase">
+                        <tr className="">
                             <th className="py-2 px-3 text-left">Lab No</th>
                             <th className="py-2 px-3 text-left">Date</th>
                             <th className="py-2 px-3 text-left">Patient Name</th>
@@ -131,7 +150,7 @@ const Management = () => {
                             sampleData.map((sample) => (
                                 <tr
                                     key={sample._id}
-                                    className="hover:bg-gray-100 transition duration-200"
+                                    className="hover:bg-gray-100 transition text-sm duration-200"
                                 >
                                     <td className="py-3 px-4">{sample.hospitalNumber}</td>
                                     <td className="py-3 px-4">{sample.dateOfSpecimen || "N/A"}</td>
@@ -139,7 +158,7 @@ const Management = () => {
                                     <td
 
                                     >
-                                        <p className={`w-1/2 p-2 text-sm text-center rounded-full font-semibold ${sample.sampleStatus === "accepted"
+                                        <p className={`w-1/2 p-2 text-[10px] text-center rounded-full font-semibold ${sample.sampleStatus === "accepted"
                                             ? "text-green-600 bg-green-300"
                                             : "text-red-600 bg-red-300"
                                             }`}>{sample.sampleStatus}</p>
@@ -162,6 +181,34 @@ const Management = () => {
                     </tbody>
                 </table>
 
+                <div className="flex w-full max-w-full justify-between mt-4">
+                    <div className="flex items-center gap-2">
+                        <button className="flex gap-2 border-[1px] border-black p-2 items-center justify-center rounded-md" onClick={prevPage}>
+                            <ArrowLeft />
+                            <p>Previous</p>
+                        </button>
+                    </div>
+                    <div className="flex gap-2 items-center ">
+                        {
+                            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((val, index) => <div className={`rounded-md py-2 px-4 cursor-pointer transition duration-300 
+                                ${page === val ? "bg-blue-500 text-white" : "bg-white hover:bg-blue-200 hover:text-blue-400"}`}
+                                key={index}
+                                onClick={() => setPage(val)}
+                            >
+                                {val}
+                            </div>
+
+
+                            )
+                        }
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button className="flex gap-2 border-[1px] border-black p-2 items-center justify-center rounded-md" onClick={nextPage}>
+                            <ArrowRight />
+                            <p>Next</p>
+                        </button>
+                    </div>
+                </div>
                 <div>
 
                 </div>
