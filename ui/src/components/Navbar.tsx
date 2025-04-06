@@ -5,9 +5,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useStepContext } from '@/context/StepContext';
 import { ArrowLeft } from 'lucide-react';
+
 const Navbar = () => {
 
     const { prevStep, currentStep } = useStepContext();
+
+
+
+
+
+
+
+
     return (
         <header className=''>
             <nav className='w-full h-16 px-16 border-b-[1px] fixed border-[#E7E7E7] flex items-center justify-between backdrop-blur-sm bg-white/30'>
@@ -16,10 +25,7 @@ const Navbar = () => {
                     <Image src={logo} width={171} height={72} alt="" />
                 </div>
 
-                <ul>
-                    <Link href="/">Login</Link>
-                    <Link href="/">Login</Link>
-                </ul>
+           
             </nav>
         </header >
     )

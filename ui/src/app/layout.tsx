@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import { StepContextProvider } from "@/context/StepContext";
 import SideBar from "@/components/SideBar";
 import LayoutWrapper from "@/components/LayoutWrapper";
+import { Toaster } from "sonner";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({
 
           <Navbar />
           <LayoutWrapper>{children}</LayoutWrapper>
+          <Toaster position="bottom-right"  />
         </StepContextProvider>
       </body>
     </html>

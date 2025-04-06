@@ -11,6 +11,8 @@ import FormPage5 from '@/components/SignUpForm/FormPage5';
 import { useEffect } from 'react';
 import { useStepContext } from '@/context/StepContext';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 const Register = () => {
 
     const { currentStep, nextStep, prevStep } = useStepContext();
@@ -27,7 +29,7 @@ const Register = () => {
             facilityName: "",
             facilityNumber: "",
             role: "",
-            departmentName : "",
+            departmentName: "",
             password: "",
             confirmPassword: ""
         }
@@ -43,13 +45,31 @@ const Register = () => {
         }))
     }
 
+    const validateUser = () => {
+        if (!formData.fullName || !formData.email || !formData.phoneNumber || !formData.facilityName || !formData.facilityNumber || !formData.role || !formData.departmentName || !formData.password || !formData.confirmPassword) {
+            toast.error("Please fill all fields")
+            return false;
+        }
+        if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            toast.error("Please enter a valid email")
+            return false;
+        }
+        if (formData.password.length < 6) {
+            toast.error("Password must be at least 6 characters long")
+            return false;
+        }
+    }
+
+
     const handleSumit = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault()
         try {
-            await signUp(formData,nextStep);
+            const isValid = validateUser();
+            if (!isValid) return;
+            await signUp(formData, nextStep);
         } catch (err) {
             console.log(err)
-         
+
         }
     }
     return (

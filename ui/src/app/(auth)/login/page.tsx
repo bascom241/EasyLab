@@ -5,10 +5,11 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner';
 const page = () => {
 
     const [formData, setFormData] = useState({ email: "", password: "" });
-    const {login } = useAuthStore();
+    const { login } = useAuthStore();
     const router = useRouter();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,9 +21,27 @@ const page = () => {
         })
     }
 
+    const validateUser = () => {
+        if (!formData.email || !formData.password) {
+            toast.error("Please fill all fields")
+            return false;
+        }
+        if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            toast.error("Please enter a valid email")
+            return false;
+        }
+        if (formData.password.length < 6) {
+            toast.error("Password must be at least 6 characters long")
+            return false;
+        }
+    }
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        login(formData,router);
+
+        const isValid = validateUser();
+        if (!isValid) return;
+        login(formData, router);
     }
     return (
         <main className='h-screen max-h-screen w-full bg-white flex flex-col items-center justify-center pt-16'>
@@ -72,6 +91,14 @@ const page = () => {
                         <p>By Signin Up Now You agree to our <span className='text-[#01368B]'> Term Of Service</span></p>
                     </div>
                     <p>and <span className='text-[#01368B] '>  Privacy Policy </span></p>
+                    <p>
+                        Don't have an Account ? <span>
+                        <Link href="/register">
+                            Sign Up
+                        </Link>
+                        </span>
+                      
+                    </p>
 
                 </div>
             </form>

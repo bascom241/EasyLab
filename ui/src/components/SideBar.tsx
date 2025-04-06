@@ -7,11 +7,14 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { useAuthStore } from "@/store/useAuthStore";
+import { useRouter } from "next/navigation";
+
 const SideBar = () => {
     const pathName = usePathname();
     const [isMoreOpen, setIsMoreOpen] = useState(false);
 
-    if (pathName === "/login" || pathName === "/register") {
+    if (pathName === "/login" || pathName === "/register" || pathName === "/verifyEmail") {
         return null;
     }
 
@@ -29,6 +32,12 @@ const SideBar = () => {
         { name: "Help", icon: HelpCircle, path: "/help" },
     ];
 
+    const { logout } = useAuthStore();
+    const router = useRouter();
+
+    const Logout = () => {
+        logout(router);
+    }
     return (
         <aside className="w-56 h-[88vh]  bg-white shadow-lg fixed top-16 left-0 p-4 flex flex-col">
             {/* Navigation Menu */}
@@ -77,7 +86,7 @@ const SideBar = () => {
 
             {/* Logout Button (Now Visible) */}
             <div className="mt-auto">
-                <button className="flex items-center gap-2 p-2 rounded-lg w-full text-sm text-red-600 hover:bg-red-100 transition-all">
+                <button className="flex items-center gap-2 p-2 rounded-lg w-full text-sm text-red-600 hover:bg-red-100 transition-all" onClick={Logout}>
                     <LogOut className="w-4 h-4" />
                     <span>Logout</span>
                 </button>

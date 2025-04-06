@@ -1,294 +1,319 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useCreateSampleStore } from "@/store/useCreateSampleStore";
-import { ArrowLeft, ArrowRight, ReceiptIcon, XCircle } from "lucide-react"
-
-
+import { useAuthStore } from "@/store/useAuthStore";
+import { ArrowLeft, ArrowRight, XCircle, FlaskConical, Microscope, TestTube2, Syringe, ClipboardList } from "lucide-react";
+import { motion } from "framer-motion";
 
 const Management = () => {
     const [page, setPage] = useState(1);
     const limit = 5;
     const { fetchSamples, sampleData, fetchSample, singleSampleData } = useCreateSampleStore();
     const [showModal, setShowModal] = useState(false);
-
-
-
-    const nextPage = () => {
-        if (page > 10) return
-        console.log(page)
-        setPage((prev) => prev + 1);
-    }
-
-    const prevPage = () => {
-        if (page > 1) {
-            setPage((prev) => prev - 1)
-        }
-    }
-
-
-
-    const updateModal = (id: string) => {
-        fetchSample(id);
-        setShowModal(true);
-    }
-
-    console.log(singleSampleData?.age);
+    const { authUser } = useAuthStore();
 
     const [params, setParams] = useState({
         ward: "",
         sampleStatus: "",
         ReceiptNumber: "",
         sampleInformation: ""
-    })
+    });
 
+    // **Dark & Smooth Color Palette**
+    const colors = {
+        primary: "#1a1a2e",     // Deep navy
+        secondary: "#16213e",   // Dark blue
+        accent: "#0f3460",      // Midnight blue
+        cardBg: "#ffffff",      // Pure white for cards
+        text: "#333333",        // Dark gray for text
+        lightText: "#f5f5f5",   // Light text for dark backgrounds
+        border: "#e0e0e0",      // Soft gray borders
+        success: "#4caf50",     // Calm green (only for status)
+        danger: "#e53935",      // Soft red (only for status)
+        hover: "#f0f0f0"        // Light hover effect
+    };
 
+    const nextPage = () => page < 10 && setPage(prev => prev + 1);
+    const prevPage = () => page > 1 && setPage(prev => prev - 1);
+    const updateModal = (id: string) => { fetchSample(id); setShowModal(true); };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setParams((prev) => ({
-            ...prev, [name]: value
-        }))
-    }
+        setParams(prev => ({ ...prev, [name]: value }));
+    };
 
-    useEffect(() => {
-        fetchSamples(page, limit, params);
-
-    }, [page, JSON.stringify(params)]);
-
+    useEffect(() => { fetchSamples(page, limit, params); }, [page, JSON.stringify(params)]);
 
     return (
-        <main className="mt-14 flex flex-col w-full   h-screen max-h-[29rem] gap-4 px-4">
-            <h1 className=" font-semibold text-gray-800">Management Page</h1>
-
-            {/* Search Input */}
-            <section className="w-full flex gap-3 justify-between items-center ">
-                <div className="flex w-full">
-                    <input
-                        placeholder="Search"
-                        className="py-2 px-3 border border-gray-300 rounded-l-md focus:outline-none  w-full"
-                    />
-                    <button className="bg-[#01368B] text-white px-4 py-2 rounded-r-md hover:bg-blue-700 transition">
-                        Search
-                    </button>
-                </div>
-
-                <div className="w-full flex gap-3">
-                    {/* <select className="bg-white px-3 py-2 border border-neutral-200 focus:outline-none focus:border-[#01368B] rounded-md cursor-pointer text-xs"
-                    >
-                        <option value="" disabled={true}>
-                            Sample Information
-                        </option>
-                        <option value="serum">
-                            serum
-                        </option>
-                        <option value="plasma">
-                            plasma
-                        </option>
-                        <option value="blood">
-                            blood
-                        </option>
-                        <option value="protein">
-                            protein
-                        </option>
-                    </select>
- */}
-
-                    <select
-                        value={params.sampleStatus}
-                        name="sampleStatus"
-                        onChange={handleChange}
-                        className="bg-white px-3 py-2 border border-neutral-200 focus:outline-none focus:border-[#01368B] rounded-md cursor-pointer text-xs">
-                        <option>status</option>
-                        <option value="accepted">accepted</option>
-                        <option value="rejected">rejected</option>
-                    </select>
-
-
-
-                    <select
-                        onChange={handleChange}
-                        name="ward"
-                        value={params.ward}
-                        className="bg-white px-3 py-2 border border-neutral-200 focus:outline-none focus:border-[#01368B] rounded-md cursor-pointer text-xs">
-                        <option>Ward</option>
-                        <option value="femaleSurgicalWard">femaleSurgicalWard</option>
-                        <option value="maleSurgicalWard">maleSurgicalWard</option>
-                        <option value="ENT">ENT</option>
-                        <option value="MOPD">MOPD</option>
-                        <option value="O&G">O&G</option>
-                        <option value="A&E">A&E</option>
-                        <option value="GOPD">GOPD</option>
-                    </select>
-
-                    <input
-                        name="ReceiptNumber"
-                        value={params.ReceiptNumber}
-                        onChange={handleChange}
-                        type="text"
-                        placeholder="Recipt Number"
-                        className="py-2 px-3 border border-gray-300 rounded-l-md focus:outline-none  w-full"
-                    />
-                </div>
-            </section>
-
-            {/* Table Section */}
-            <section className="w-full overflow-x-auto">
-                <table className="w-full border-2 border-gray-950 border-collapse shadow-md rounded-lg overflow-hidden">
-                    <thead className="bg-neutral-400 text-white text-sm uppercase">
-                        <tr className="">
-                            <th className="py-2 px-3 text-left">Lab No</th>
-                            <th className="py-2 px-3 text-left">Date</th>
-                            <th className="py-2 px-3 text-left">Patient Name</th>
-                            <th className="py-2 px-3 text-left">Sample Status</th>
-                            <th className="py-2 px-3 text-left">Test Type</th>
-                            <th className="py-2 px-3 text-left">Action</th>
-                        </tr>
-                    </thead>
-
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {sampleData.length > 0 ? (
-                            sampleData.map((sample) => (
-                                <tr
-                                    key={sample._id}
-                                    className="hover:bg-gray-100 transition text-sm duration-200"
-                                >
-                                    <td className="py-3 px-4">{sample.hospitalNumber}</td>
-                                    <td className="py-3 px-4">{sample.dateOfSpecimen || "N/A"}</td>
-                                    <td className="py-3 px-4">{sample.surName}</td>
-                                    <td
-
-                                    >
-                                        <p className={`w-1/2 p-2 text-[10px] text-center rounded-full font-semibold ${sample.sampleStatus === "accepted"
-                                            ? "text-green-600 bg-green-300"
-                                            : "text-red-600 bg-red-300"
-                                            }`}>{sample.sampleStatus}</p>
-                                    </td>
-                                    <td className="py-3 px-4">{sample.testType.join(", ")}</td>
-                                    <td className="py-3 px-4">
-                                        <button className="bg-[#01368B] text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700 transition" onClick={() => updateModal(sample._id)}>
-                                            View
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan={6} className="text-center py-4 text-gray-500">
-                                    No samples found
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-
-                <div className="flex w-full max-w-full justify-between mt-4">
-                    <div className="flex items-center gap-2">
-                        <button className="flex gap-2 border-[1px] border-black p-2 items-center justify-center rounded-md" onClick={prevPage}>
-                            <ArrowLeft />
-                            <p>Previous</p>
-                        </button>
+        <main className="min-h-screen bg-gray-50 p-4 md:p-8"> {/* Soft gray background */}
+            <div className="max-w-7xl mx-auto">
+                {/* Header */}
+                <div className="flex items-center gap-4 mb-8">
+                    <div className={`p-3 rounded-lg bg-[${colors.primary}] shadow-sm`}>
+                        <FlaskConical className="h-6 w-6 text-white" />
                     </div>
-                    <div className="flex gap-2 items-center ">
-                        {
-                            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((val, index) => <div className={`rounded-md py-2 px-4 cursor-pointer transition duration-300 
-                                ${page === val ? "bg-blue-500 text-white" : "bg-white hover:bg-blue-200 hover:text-blue-400"}`}
-                                key={index}
-                                onClick={() => setPage(val)}
+                    <div>
+                        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Sample Management</h1>
+                        <p className="text-gray-500">Track and manage laboratory specimens</p>
+                    </div>
+                </div>
+
+                {/* Search & Filters */}
+                <motion.section 
+                    className="bg-white rounded-lg shadow-sm p-6 mb-8 border border-[colors.border]"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="relative">
+                            <input
+                                placeholder="Search samples..."
+                                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300"
+                            />
+                            <ClipboardList className="absolute left-3 top-3 text-gray-400" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <select
+                                value={params.sampleStatus}
+                                name="sampleStatus"
+                                onChange={handleChange}
+                                className="px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 text-sm"
                             >
-                                {val}
+                                <option value="">All Status</option>
+                                <option value="accepted">Accepted</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                            <select
+                                name="ward"
+                                value={params.ward}
+                                onChange={handleChange}
+                                className="px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 text-sm"
+                            >
+                                <option value="">All Wards</option>
+                                <option value="femaleSurgicalWard">Female Surgical</option>
+                                <option value="maleSurgicalWard">Male Surgical</option>
+                            </select>
+                        </div>
+                    </div>
+                </motion.section>
+
+                {/* Samples Table */}
+                <motion.section 
+                    className="bg-white rounded-lg shadow-sm overflow-hidden border border-[colors.border]"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.1 }}
+                >
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="bg-gray-100">
+                                <tr className="text-left text-gray-600 text-sm">
+                                    <th className="py-3 px-6 font-medium">Lab No</th>
+                                    <th className="py-3 px-6 font-medium">Date</th>
+                                    <th className="py-3 px-6 font-medium">Patient</th>
+                                    <th className="py-3 px-6 font-medium">Status</th>
+                                    <th className="py-3 px-6 font-medium">Tests</th>
+                                    <th className="py-3 px-6 font-medium">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                                {sampleData.map((sample, index) => (
+                                    <motion.tr
+                                        key={sample._id}
+                                        className="hover:bg-gray-50 transition-colors"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ duration: 0.2, delay: index * 0.05 }}
+                                    >
+                                        <td className="py-4 px-6 text-gray-800 font-medium">{sample.hospitalNumber}</td>
+                                        <td className="py-4 px-6 text-gray-500">{sample.dateOfSpecimen || "—"}</td>
+                                        <td className="py-4 px-6 text-gray-800">{sample.surName}</td>
+                                        <td className="py-4 px-6">
+                                            <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                                                sample.sampleStatus === "accepted"
+                                                    ? "bg-green-50 text-green-600"
+                                                    : "bg-red-50 text-red-600"
+                                            }`}>
+                                                {sample.sampleStatus}
+                                            </span>
+                                        </td>
+                                        <td className="py-4 px-6 text-gray-500">
+                                            <div className="flex items-center gap-1">
+                                                {sample.testType.includes("Blood") && <Syringe className="h-4 w-4 text-gray-400" />}
+                                                {sample.testType.join(", ")}
+                                            </div>
+                                        </td>
+                                        <td className="py-4 px-6">
+                                            <motion.button
+                                                whileHover={{ scale: 1.03 }}
+                                                whileTap={{ scale: 0.97 }}
+                                                className="px-3 py-1.5 bg-gray-800 text-white rounded-lg text-sm hover:bg-gray-700 transition-colors shadow-xs"
+                                                onClick={() => updateModal(sample._id)}
+                                            >
+                                                View
+                                            </motion.button>
+                                        </td>
+                                    </motion.tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Pagination */}
+                    <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200">
+                        <motion.button
+                            whileHover={{ x: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-gray-700 ${page === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"}`}
+                            onClick={prevPage}
+                            disabled={page === 1}
+                        >
+                            <ArrowLeft className="h-4 w-4" />
+                            <span className="text-sm">Previous</span>
+                        </motion.button>
+
+                        <div className="flex gap-1">
+                            {[1, 2, 3, 4, 5].map((val) => (
+                                <motion.button
+                                    key={val}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className={`w-8 h-8 rounded flex items-center justify-center text-sm ${
+                                        page === val 
+                                            ? "bg-gray-800 text-white" 
+                                            : "text-gray-600 hover:bg-gray-100"
+                                    }`}
+                                    onClick={() => setPage(val)}
+                                >
+                                    {val}
+                                </motion.button>
+                            ))}
+                        </div>
+
+                        <motion.button
+                            whileHover={{ x: 2 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-gray-700 ${page > 4 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"}`}
+                            onClick={nextPage}
+                            disabled={page > 4}
+                        >
+                            <span className="text-sm">Next</span>
+                            <ArrowRight className="h-4 w-4" />
+                        </motion.button>
+                    </div>
+                </motion.section>
+
+                {/* Sample Detail Modal */}
+                {showModal && (
+                    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                        <motion.div 
+                            className="bg-white rounded-xl shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+                            initial={{ opacity: 0, scale: 0.98 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.98 }}
+                        >
+                            {/* Modal Header */}
+                            <div className="sticky top-0 bg-gray-800 text-white p-4 flex justify-between items-center shadow-sm">
+                                <div className="flex items-center gap-3">
+                                    <FlaskConical className="h-5 w-5" />
+                                    <h2 className="text-lg font-semibold">Sample Details</h2>
+                                </div>
+                                <button onClick={() => setShowModal(false)} className="text-gray-300 hover:text-white">
+                                    <XCircle className="h-5 w-5" />
+                                </button>
                             </div>
 
-
-                            )
-                        }
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <button className="flex gap-2 border-[1px] border-black p-2 items-center justify-center rounded-md" onClick={nextPage}>
-                            <ArrowRight />
-                            <p>Next</p>
-                        </button>
-                    </div>
-                </div>
-                <div>
-
-                </div>
-            </section>
-
-            {
-
-                showModal &&
-
-                <section className="fixed inset-0 flex items-center justify-center bg-black/50 py-4">
-
-                    <div className="bg-white  border-[1px] border-gray-400 shadow-lg text-center w-2/4 h-full ">
-                        <div className="p-6 border-b-[1px] border-b-gray-300 flex gap-16">
-                            <XCircle onClick={() => setShowModal(false)} color="red" />
-                            <p>Unilorin Teaching Hospital</p>
-
-                        </div>
-                        <div className="bg-gray-200 w-full h-3/4" >
+                            {/* Modal Content */}
                             {singleSampleData && (
-                                <div className="flex flex-col gap-2 px-4 ">
-                                    <div className="flex flex-col gap-1">
-                                        <h1 className="text-2xl font-semibold">#{singleSampleData.hospitalNumber}</h1>
-                                        <p>{singleSampleData.dateOfSpecimen}</p>
-                                        <p>RegNumber:{singleSampleData.recieptNumber}</p>
-                                    </div>
-
-                                    <div className="flex flex-col gap-4 text-sm">
-                                        <div className="flex justify-between ">
-                                            <p className="font-bold">Patient</p>
-                                            <p>{singleSampleData.surName}</p>
+                                <div className="p-6">
+                                    <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <h3 className="text-lg font-bold text-gray-800">#{singleSampleData.hospitalNumber}</h3>
+                                            <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                                                singleSampleData.sampleStatus === "accepted"
+                                                    ? "bg-green-50 text-green-600"
+                                                    : "bg-red-50 text-red-600"
+                                            }`}>
+                                                {singleSampleData.sampleStatus}
+                                            </span>
                                         </div>
-                                        <div className="flex justify-between ">
-                                            <p className="font-bold">Gender</p>
-                                            <p>{singleSampleData.gender}</p>
-                                        </div>
-                                        <div className="flex justify-between ">
-                                            <p className="font-bold">Age</p>
-                                            <p>{singleSampleData.age}</p>
-                                        </div>
-                                        <div className="flex justify-between ">
-                                            <p className="font-bold">Sample Type</p>
-                                            <p>{singleSampleData.sampleInformation}</p>
-                                        </div>
-                                        <div className={'flex justify-between'}>
-                                            <p className="font-bold">Sample Status</p>
-                                            <p className={`text-[7px] ${singleSampleData.sampleStatus === "accepted"
-                                                ? "text-green-600 bg-green-300 rounded-full p-2"
-                                                : "text-red-600 bg-red-300 rounded-full p-2"
-                                                }`}>{singleSampleData.sampleStatus}</p>
-                                        </div>
-                                        <div className="flex justify-between ">
-                                            <p className="font-bold">Ward</p>
-                                            <p>{singleSampleData.ward}</p>
-                                        </div>
-                                        <div className="flex justify-between ">
-                                            <p className="font-bold">Test Type</p>
-                                            <p>{singleSampleData.testType.join(", ")}</p>
-                                        </div>
-                                        <div className="flex justify-between ">
-                                            <p className="font-bold">Requesters Information</p>
-                                            <p>{singleSampleData.requestersInformation.consultant}</p>
-                                        </div>
-                                        <div className="flex justify-between ">
-                                            <p className="font-bold">Scientist In Charge</p>
-                                            <p>{singleSampleData.requestersInformation.requestingDoctor}</p>
+                                        <div className="flex justify-between text-sm text-gray-500">
+                                            <p>Collected: {singleSampleData.dateOfSpecimen}</p>
+                                            <p>Receipt: {singleSampleData.recieptNumber}</p>
                                         </div>
                                     </div>
-                                </div>)}
-                        </div>
 
-                        <div className="w-full flex gap-4 items-center justify-center py-3 px-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {/* Patient Info */}
+                                        <div className="space-y-4">
+                                            <h4 className="text-md font-semibold text-gray-700 border-b pb-2">Patient</h4>
+                                            <div className="space-y-3 text-sm">
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-500">Name:</span>
+                                                    <span className="font-medium text-gray-800">{singleSampleData.surName}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-500">Gender:</span>
+                                                    <span className="font-medium text-gray-800">{singleSampleData.gender}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-500">Age:</span>
+                                                    <span className="font-medium text-gray-800">{singleSampleData.age}</span>
+                                                </div>
+                                            </div>
+                                        </div>
 
+                                        {/* Sample Info */}
+                                        <div className="space-y-4">
+                                            <h4 className="text-md font-semibold text-gray-700 border-b pb-2">Sample</h4>
+                                            <div className="space-y-3 text-sm">
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-500">Type:</span>
+                                                    <span className="font-medium text-gray-800">{singleSampleData.sampleInformation}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-500">Ward:</span>
+                                                    <span className="font-medium text-gray-800">{singleSampleData.ward}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-500">Tests:</span>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {singleSampleData.testType.map((test, i) => (
+                                                            <span key={i} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                                {test}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                            <button className="bg-[#01368B] rounded-md text-white p-2 w-full  transition duration-300 hover:bg-[#01368bb1]">
-                                Print Result
-                            </button>
-                        </div>
+                                    {/* Modal Footer */}
+                                    <div className="mt-8 flex gap-4">
+                                        <motion.button
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            className="flex-1 py-2.5 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors shadow-xs"
+                                        >
+                                            Print Result
+                                        </motion.button>
+                                        <motion.button
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            className="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                                            onClick={() => setShowModal(false)}
+                                        >
+                                            Close
+                                        </motion.button>
+                                    </div>
+                                </div>
+                            )}
+                        </motion.div>
                     </div>
-                </section>
-            }
+                )}
+            </div>
         </main>
     );
 };

@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
 
     const pathName = usePathname();
-    const hideSidebar = pathName === "/login" || pathName === "/register";
+    const hideSidebar = pathName === "/login" || pathName === "/register" || pathName === "/verifyEmail" ;
 
     return (
         <div className={`${!hideSidebar? "p-6" :""}  flex gap-4`}>

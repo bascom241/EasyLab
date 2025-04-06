@@ -54,9 +54,8 @@ const register = asyncHandler(async (req, res) => {
 
 const verifyEmail = asyncHandler(async (req, res) => {
     const { code } = req.body;
-
     if (!code) return res.status(403).json({ success: false, message: "Verification code is required" });
-
+  
     const user = await User.findOne({
         verificationToken: { $exists: true },
         verificationTokenExpiresDate: { $gte: Date.now() }
@@ -97,6 +96,12 @@ const login = asyncHandler(async(req,res)=>{
      res.status(200).json({success:true, message:"User Logged in successfully"})
     
 
+})
+
+
+const logout = asyncHandler(async(req,res)=>{
+    res.clearCookie("token");
+    res.status(200).json({message:"Logout Successfully"})
 })
 
 const forgotPassword = asyncHandler(async(req,res)=>{
@@ -142,7 +147,7 @@ const checkAuth = asyncHandler(async (req,res)=>{
     res.status(200).json({success:true,user})
 })
 
-export { register, verifyEmail,login,forgotPassword,resetPassword,checkAuth}
+export { register, verifyEmail,login,forgotPassword,resetPassword,checkAuth,logout}
 
 
 
