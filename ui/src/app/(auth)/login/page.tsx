@@ -6,12 +6,17 @@ import { ArrowRight } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner';
+import {Loader} from 'lucide-react'
+import {EyeOff,Eye } from 'lucide-react'
 const page = () => {
 
     const [formData, setFormData] = useState({ email: "", password: "" });
-    const { login } = useAuthStore();
+    const { login,isLogin } = useAuthStore();
     const router = useRouter();
 
+    const [showPassword,setShowPassword] = useState(false);
+    const [policyCheck,setPolicyCheck] = useState(false);
+    console.log(policyCheck)
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => {
@@ -34,14 +39,25 @@ const page = () => {
             toast.error("Password must be at least 6 characters long")
             return false;
         }
+
+        if(policyCheck === false){
+            toast.error("You must agree to terms of service to sign in ")
+        }else{
+            return true
+        }
     }
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        console.log("Submitting.....")
         const isValid = validateUser();
-        if (!isValid) return;
-        login(formData, router);
+        if (!isValid){
+            login(formData, router);
+        } else{
+            return 
+        }
+      
     }
     return (
         <main className='h-screen max-h-screen w-full bg-white flex flex-col items-center justify-center pt-16'>
@@ -59,34 +75,51 @@ const page = () => {
                         onChange={handleChange}
                         className='p-3 w-full bg-white border-gray-200 border-[1px] rounded-md'
                     />
+
+               
                 </div>
 
-                <div className='flex flex-col gap-4'>
+                <div className='relative flex flex-col gap-4'>
                     <label htmlFor='password'>Password</label>
                     <input
                         className='p-3 w-full bg-white border-gray-200 border-[1px] rounded-md'
                         id="password"
-                        type='password'
+                        type={showPassword ? "text" : "password"}
                         placeholder='Password '
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
                     />
+                    <button
+                    type='button'
+                     className='absolute top-14 right-0 flex items-center pr-3'
+                     onClick={()=> setShowPassword(!showPassword)}
+                     >
+                        {
+                            showPassword ? 
+                            <EyeOff className="w-5 h-5 text-gray-400"/> :      
+                            <Eye className="w-5 h-5 text-gray-400"/>
+                        }
+                    </button>
                 </div>
-
-
                 <div className='flex items-center w-full justify-center'>
                     <button type='submit' className='bg-[#01368B] w-1/2 flex items-center justify-center gap-3 text-white p-4 rounded-md' >
-                        <p className="text-[0.9rem]">Continue</p>
-                        <ArrowRight size={20} />
+                    {
+                        isLogin ? <Loader size={20} className='animate-spin' /> : <> <p className="text-[0.9rem]">Continue</p>  <ArrowRight size={20} /></>
+                    }
+                       
+                       
                     </button>
                 </div>
 
                 <div className='flex flex-col items-center justify-center'>
                     <div className='flex gap-2'>
                         <input
+                        onChange={()=> setPolicyCheck(!policyCheck)}
                             className=''
                             type='checkbox'
+                            checked={true && policyCheck}
+
                         />
                         <p>By Signin Up Now You agree to our <span className='text-[#01368B]'> Term Of Service</span></p>
                     </div>

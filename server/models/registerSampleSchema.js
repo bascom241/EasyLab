@@ -54,7 +54,7 @@ const registerSampleSchema = new mongoose.Schema({
     },
     requestersInformation: {
         requestingDoctor: { type: String, required: true },
-        consultant: { type: String, required: true }
+        consultant: { type: String, required: true },
     },
     testType: {
         type: [String],

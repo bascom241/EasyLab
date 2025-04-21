@@ -22,6 +22,7 @@ const register = asyncHandler(async (req, res) => {
 
     const { fullName, email, password, facilityName, facilityNumber, role, departmentName, phoneNumber } = req.body;
 
+    console.log(fullName, email, password, facilityName, facilityNumber, role, departmentName, phoneNumber)
     if (!validateFields(req.body, requiredFields)) {
         return res.status(403).json({ message: "All field are required" })
     }

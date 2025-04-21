@@ -24,6 +24,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     isVerifyingEmail:false,
     signUp: async (formData: object, nextStep) => {
 
+        console.log("signingUp");
         try {
             set({ isSignUp: true })
             const response = await axiosInstance.post('/create-account', formData);
@@ -39,6 +40,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     login: async (formData: object,router) => {
         set({isLogin:true})
+        console.log("me");
         try{
             const response = await axiosInstance.post("/login", formData);
             set({authUser:response.data})
@@ -58,7 +60,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     logout:async(router:any)=> {
         try {
             const response = await axiosInstance.get("/logout");
-            toast.error(response.data.message)
+            toast.success(response.data.message)
             router.push("/login")
             set({authUser:null});
            
