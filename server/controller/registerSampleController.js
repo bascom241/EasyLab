@@ -131,13 +131,28 @@ const searchSample = async (req, res) => {
         }
 
         res.status(200).json({
-            data:samples
+            data: samples
         })
 
     } catch (error) {
         console.log(error)
-        res.status(500).json({message:error.message});
-        
+        res.status(500).json({ message: error.message });
+
     }
 };
-export { registerSample, getRegsteredSample, getSample, updateSample, searchSample };
+
+const deleteSample = async (req,res) => {
+
+    const {id} = req.params;
+    try {
+        const sample = await RegisterSample.findByIdAndDelete(id); 
+
+        if(!sample){
+            return res.status(404).json({message:"Sample not found"})
+        }
+        res.status(200).json({message:"Sample deleted successfully"})
+    } catch (error) {
+        res.status(500).json({message:error.message})
+    }
+}
+export { registerSample, getRegsteredSample, getSample, updateSample, searchSample, deleteSample};

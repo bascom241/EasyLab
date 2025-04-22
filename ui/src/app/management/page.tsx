@@ -8,9 +8,10 @@ import { motion } from "framer-motion";
 const Management = () => {
     const [page, setPage] = useState(1);
     const limit = 5;
-    const { fetchSamples, sampleData, fetchSample, singleSampleData, results, searchSample, editSample, editingModal } = useCreateSampleStore();
+    const { fetchSamples, sampleData, deleteSample, fetchSample, isDeletingSample, singleSampleData, results, searchSample, editSample, editingModal } = useCreateSampleStore();
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showDeleteModal, setDeleteModal] = useState(false);
     const { authUser } = useAuthStore();
     const [query, setQuery] = useState("");
 
@@ -65,6 +66,12 @@ const Management = () => {
         searchSample(value);
     }
 
+    const handleDelete = async () =>{
+        const success = await deleteSample(singleSampleData?._id!);
+        if(success){
+            setDeleteModal(false);
+        }
+    }
 
     const [params, setParams] = useState({
         ward: "",
@@ -89,7 +96,22 @@ const Management = () => {
 
     const nextPage = () => page < 10 && setPage(prev => prev + 1);
     const prevPage = () => page > 1 && setPage(prev => prev - 1);
-    const updateModal = (id: string) => { fetchSample(id); setShowModal(true); };
+
+    // Modals Functions
+    const updateModal = (id: string) => {
+        fetchSample(id); 
+        setShowModal(true);
+    };
+
+    const editModal = (id: string) => {
+        fetchSample(id);
+        setShowEditModal(true);
+        // editSample(formData, id);
+    }
+
+    const deleteModal = () => {
+        setDeleteModal(true);
+    }
 
     const handleEditSample = async (id: string) => {
         const success = await editSample(formData, id);
@@ -100,11 +122,7 @@ const Management = () => {
         }
 
     }
-    const editModal = (id: string) => {
-        fetchSample(id);
-        setShowEditModal(true);
-        // editSample(formData, id);
-    }
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setParams(prev => ({ ...prev, [name]: value }));
@@ -141,12 +159,12 @@ const Management = () => {
     }, [singleSampleData]);
 
     return (
-        <main className="min-h-screen bg-gray-50 p-4 md:p-8"> {/* Soft gray background */}
+        <main className="min-h-screen mt-8 bg-gray-50 p-4 md:p-8"> {/* Soft gray background */}
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center gap-4 mb-8">
                     <div className={`p-3 rounded-lg bg-[${colors.primary}] shadow-sm`}>
-                        <FlaskConical className="h-6 w-6 text-white" />
+                        <FlaskConical className="h-6 w-6 text-gray-800" />
                     </div>
                     <div>
                         <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Sample Management</h1>
@@ -259,6 +277,14 @@ const Management = () => {
                                                 >
                                                     Edit
                                                 </motion.button>
+                                                <motion.button
+                                                    whileHover={{ scale: 1.03 }}
+                                                    whileTap={{ scale: 0.97 }}
+                                                    className="px-3 py-1.5 bg-red-400 text-white rounded-lg text-sm hover:bg-green-800 transition-colors shadow-2xs"
+                                                    onClick={deleteModal}
+                                                >
+                                                    Delete
+                                                </motion.button>
                                             </td>
                                         </motion.tr>
                                     ))
@@ -304,6 +330,15 @@ const Management = () => {
                                                     onClick={() => editModal(sample._id)}
                                                 >
                                                     Edit
+                                                </motion.button>
+
+                                                <motion.button
+                                                    whileHover={{ scale: 1.03 }}
+                                                    whileTap={{ scale: 0.97 }}
+                                                    className="px-3 py-1.5 bg-red-400 text-white rounded-lg text-sm hover:bg-green-800 transition-colors shadow-2xs"
+                                                    onClick={deleteModal}
+                                                >
+                                                    Delete
                                                 </motion.button>
                                             </td>
                                         </motion.tr>
@@ -465,6 +500,40 @@ const Management = () => {
                     </div>
                 )}
 
+                {
+                    showDeleteModal && (
+                        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center">
+                            <motion.div
+                            className="bg-white rounded-xl p-4 shadow-lg  max-w-2xl max-h-[90vh] overflow-y-auto"
+                            initial={{opacity:0,scale:0.98}}
+                            animate={{opacity:1, scale: 1}}
+                            exit={{opacity:0,scale:0.98}}
+                            >
+                                <div className="flex flex-col items-center gap-2 p-2">
+                                    <h1 className="font-bold">Are You Sure you want to delete this sample</h1>
+                                    <p className="text-red-600"><span className="font-bold">Note:</span>This Action cannot be undone</p>
+                                    <div className="flex gap-5 pt-2 ">
+                                        <button className="bg-green-700 rounded-md py-1.5 px-6 text-white hover:bg-green-950 transition-all duration-300 "
+                                        onClick={()=>setDeleteModal(false)}
+                                        >
+                                            Exit
+                                        </button>
+
+                                        <button className="bg-red-700 rounded-md p-1.5 px-6 text-white hover:bg-red-950 transition-all duration-300 "
+                                        onClick={handleDelete}
+                                        >{
+                                            isDeletingSample ? <Loader size={20} className="animate-spin" /> : <>Delete</>
+                                        }
+                                          
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </motion.div>
+                        </div>
+                    )
+                }
+
                 {showEditModal && (
                     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
                         <motion.div
@@ -588,7 +657,7 @@ const Management = () => {
                                                     <label className="text-sm font-medium text-gray-700">Sample Status</label>
                                                     <select
                                                         className={`p-3 w-full bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${formData.sampleStatus === "accepted" ? "text-green-600" :
-                                                                formData.sampleStatus === "rejected" ? "text-red-600" : "text-gray-700"
+                                                            formData.sampleStatus === "rejected" ? "text-red-600" : "text-gray-700"
                                                             }`}
                                                         value={formData.sampleStatus}
                                                         onChange={handleFormChange}

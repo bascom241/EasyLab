@@ -38,6 +38,8 @@ interface SampleStoreState {
     editSample: (formData: object, id: string) => Promise<boolean | undefined>
     editingModal: boolean
     searchSample:(query:string)=> Promise<void>
+    deleteSample:(id:string)=> Promise<boolean | undefined>
+    isDeletingSample:boolean
     results:SampleDataType[] | null
 }
 
@@ -50,6 +52,7 @@ export const useCreateSampleStore = create<SampleStoreState>((set) => ({
     totalPages: 1,
     singleSampleData: null,
     editingModal: false,
+    isDeletingSample:false,
     submitSample: async (formData: object, nextStep: () => void) => {
         try {
             set({ isSubmitingSample: true })
@@ -116,6 +119,27 @@ export const useCreateSampleStore = create<SampleStoreState>((set) => ({
             if(err instanceof Error){
                 toast.error((err as any ).response.data.message)
             }
+        }
+    },
+    deleteSample: async(id:string) =>{
+        set({isDeletingSample:true})
+        try {
+            const response = await axiosInstance.delete(`/sample/delete-sample/${id}`);
+            set((state)=> ({...state,sampleData:state.sampleData.filter((sample)=> sample._id !== id)}))
+            toast.success(response.data.message);
+            set({isDeletingSample:false})
+            return true;
+        } catch (error) {
+            if(error instanceof Error){
+                toast.error((error as any).response.data.message);
+                set({isDeletingSample:false})
+            }else{
+                toast.error("Something went wrong")
+                set({isDeletingSample:false})
+            }
+            return false;
+        } finally{
+            set({isDeletingSample:false})
         }
     }
 }))
