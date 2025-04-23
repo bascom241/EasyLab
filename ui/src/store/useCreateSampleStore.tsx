@@ -41,6 +41,7 @@ interface SampleStoreState {
     deleteSample:(id:string)=> Promise<boolean | undefined>
     isDeletingSample:boolean
     results:SampleDataType[] | null
+    isLoading: boolean 
 }
 
 export const useCreateSampleStore = create<SampleStoreState>((set) => ({
@@ -53,6 +54,7 @@ export const useCreateSampleStore = create<SampleStoreState>((set) => ({
     singleSampleData: null,
     editingModal: false,
     isDeletingSample:false,
+    isLoading:false,
     submitSample: async (formData: object, nextStep: () => void) => {
         try {
             set({ isSubmitingSample: true })
@@ -85,6 +87,7 @@ export const useCreateSampleStore = create<SampleStoreState>((set) => ({
         }
     },
     fetchSamples: async (page: number, limit: number, params: {}) => {
+        set({isLoading:true})
         try {
             const response = await axiosInstance.get("/sample/samples", {
                 params: { page, limit, ...params }
@@ -92,18 +95,21 @@ export const useCreateSampleStore = create<SampleStoreState>((set) => ({
             set({ sampleData: response.data.data });
             set({ totalPages: response.data.totalPages });
             console.log(response);
+            set({isLoading:false})
 
         } catch (error) {
             console.log(error);
+            set({isLoading:false})
         }
 
     },
     fetchSample: async (id: string) => {
+        set ({ isLoading: true })
         try {
             const response = await axiosInstance.get(`/sample/sample/${id}`);
             console.log(response);
             set((state) => ({ ...state, singleSampleData: response.data.sample }));
-
+            set({ isLoading: false })
         } catch (error) {
             console.log(error);
         }

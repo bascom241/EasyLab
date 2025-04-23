@@ -28,7 +28,7 @@ const SideBar = () => {
 
     const moreItems = [
         { name: "Notifications", icon: Bell, path: "/notifications" },
-        { name: "Settings", icon: Settings, path: "/settings" },
+        { name: "Profile-Setting", icon: Settings, path: "/settings" },
         { name: "Help", icon: HelpCircle, path: "/help" },
     ];
 

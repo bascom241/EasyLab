@@ -12,7 +12,7 @@ const Management = () => {
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setDeleteModal] = useState(false);
-    const { authUser } = useAuthStore();
+
     const [query, setQuery] = useState("");
 
     const [formData, setFormData] = useState<{
