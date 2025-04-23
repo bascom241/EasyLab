@@ -66,10 +66,12 @@ const Management = () => {
         searchSample(value);
     }
 
-    const handleDelete = async () =>{
-        const success = await deleteSample(singleSampleData?._id!);
+    const handleDelete = async (id:string) =>{
+        console.log(id);
+        const success = await deleteSample(id);
         if(success){
             setDeleteModal(false);
+            fetchSamples(page, limit, params);
         }
     }
 
@@ -109,7 +111,8 @@ const Management = () => {
         // editSample(formData, id);
     }
 
-    const deleteModal = () => {
+    const deleteModal = (id:string) => {
+        fetchSample(id);
         setDeleteModal(true);
     }
 
@@ -281,7 +284,7 @@ const Management = () => {
                                                     whileHover={{ scale: 1.03 }}
                                                     whileTap={{ scale: 0.97 }}
                                                     className="px-3 py-1.5 bg-red-400 text-white rounded-lg text-sm hover:bg-green-800 transition-colors shadow-2xs"
-                                                    onClick={deleteModal}
+                                                    onClick={()=>deleteModal(sample._id)}
                                                 >
                                                     Delete
                                                 </motion.button>
@@ -336,7 +339,7 @@ const Management = () => {
                                                     whileHover={{ scale: 1.03 }}
                                                     whileTap={{ scale: 0.97 }}
                                                     className="px-3 py-1.5 bg-red-400 text-white rounded-lg text-sm hover:bg-green-800 transition-colors shadow-2xs"
-                                                    onClick={deleteModal}
+                                                    onClick={()=>deleteModal(sample._id)}
                                                 >
                                                     Delete
                                                 </motion.button>
@@ -520,7 +523,7 @@ const Management = () => {
                                         </button>
 
                                         <button className="bg-red-700 rounded-md p-1.5 px-6 text-white hover:bg-red-950 transition-all duration-300 "
-                                        onClick={handleDelete}
+                                        onClick={()=>handleDelete(singleSampleData?._id ?? "")}
                                         >{
                                             isDeletingSample ? <Loader size={20} className="animate-spin" /> : <>Delete</>
                                         }

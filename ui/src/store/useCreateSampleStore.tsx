@@ -123,13 +123,17 @@ export const useCreateSampleStore = create<SampleStoreState>((set) => ({
     },
     deleteSample: async(id:string) =>{
         set({isDeletingSample:true})
+        console.log(id)
         try {
+            
             const response = await axiosInstance.delete(`/sample/delete-sample/${id}`);
+            console.log(response)
             set((state)=> ({...state,sampleData:state.sampleData.filter((sample)=> sample._id !== id)}))
             toast.success(response.data.message);
             set({isDeletingSample:false})
             return true;
         } catch (error) {
+            console.log(error)
             if(error instanceof Error){
                 toast.error((error as any).response.data.message);
                 set({isDeletingSample:false})

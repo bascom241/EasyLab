@@ -152,6 +152,7 @@ const deleteSample = async (req,res) => {
         }
         res.status(200).json({message:"Sample deleted successfully"})
     } catch (error) {
+        console.log(error);
         res.status(500).json({message:error.message})
     }
 }
