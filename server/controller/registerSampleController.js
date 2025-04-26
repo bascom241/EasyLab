@@ -1,8 +1,8 @@
 import RegisterSample from "../models/registerSampleSchema.js";
 import asyncHandler from "express-async-handler";
 import { validateSampleFields } from "../utils/validator.js";
-
-
+import { io } from "../index.js";
+import Notifications from "../models/notificatonSchema.js";
 const requiredFields = [
     "surName",
     "otherNames",
@@ -41,6 +41,22 @@ const registerSample = asyncHandler(async (req, res) => {
         const newSample = new RegisterSample(sampleData);
         await newSample.save();
 
+
+        const notification = new Notifications({
+            tittle:"New Sample Registered",
+            message:   `Sample with Consultant ${newSample.requestersInformation.consultant} has been registered`
+
+        })
+
+        await notification.save();
+
+        io.emit("new-notification",{
+            id: notification._id,
+            title: notification.title,
+            message: notification.message,
+            createdAt: notification.createdAt,
+            isRead: notification.isRead,
+        })
         res.status(201).json({ message: "Congratulations! You have successfully saved your sample", sampleId: newSample._id });
     } catch (error) {
         console.error("Error registering sample:", error);
@@ -68,6 +84,8 @@ const updateSample = async (req, res) => {
 
 const getRegsteredSample = async (req, res) => {
     try {
+
+
         const page = req.query.page || 1;
         const limit = req.query.limit || 10;
         const skip = (page - 1) * limit;
@@ -156,4 +174,19 @@ const deleteSample = async (req,res) => {
         res.status(500).json({message:error.message})
     }
 }
-export { registerSample, getRegsteredSample, getSample, updateSample, searchSample, deleteSample};
+
+
+// Notifications Logic 
+
+const getNotifications = async (req,res) => {
+    try {
+        const notifications = await Notifications.find().sort();
+        if(!notifications){
+            return res.status(401).json({message:"Notifications Not Found"})
+        }
+        res.status(200).json({ data:notifications,notificatonLength:notifications.length, message:"All Notifications"})
+    } catch (error) {
+        res.status(500).json({message:error.message})
+    }
+}
+export { registerSample, getRegsteredSample, getSample, updateSample, searchSample, deleteSample,getNotifications};

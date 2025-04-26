@@ -1,10 +1,9 @@
 "use client";
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { DATA } from "../../data";
 import { ArrowRight } from "lucide-react";
-import { useAuthStore } from "@/store/useAuthStore";
 import { useCreateSampleStore } from "@/store/useCreateSampleStore";
+
 interface RequestersInformation {
   requestingDoctor: string;
   consultant: string;
@@ -22,37 +21,39 @@ interface FormData {
   recieptNumber: string;
   ward: string;
   requestersInformation: RequestersInformation;
-  testType: string[]; // Array of strings
+  testType: string[];
 }
 
 type SampleForm3Props = {
-  nextStep: () => void
-  handleFormChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
-  formData: FormData
-  setFormData: (data: any) => void
-  handleSubmit: (e: React.ChangeEvent<HTMLFormElement>) => void
-}
-const SampleForm3: React.FC<SampleForm3Props> = ({ nextStep, handleFormChange, formData, setFormData, handleSubmit }) => {
+  nextStep: () => void;
+  handleFormChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  formData: FormData;
+  setFormData: (data: any) => void;
+  handleSubmit: (e: React.ChangeEvent<HTMLFormElement>) => void;
+};
+
+const SampleForm3: React.FC<SampleForm3Props> = ({ 
+  nextStep, 
+  handleFormChange, 
+  formData, 
+  setFormData, 
+  handleSubmit 
+}) => {
   const [tests, setTests] = useState(DATA);
   const [selectedTests, setSelectedTests] = useState<
     { test: string; bgColor: string; color: string }[]
   >([]);
-
   const [searchItem, setSearchItem] = useState("");
   const [selectAll, setSelectAll] = useState(false);
+  const { submitSample } = useCreateSampleStore();
 
-
-
-
-  // Toggle individual checkbox
   const handleCheckboxChange = (index: number) => {
     const updatedTests = [...tests];
     updatedTests[index].checkbox = !updatedTests[index].checkbox;
     setTests(updatedTests);
 
-    const selected = [...selectedTests]
+    const selected = [...selectedTests];
     const testItem = updatedTests[index];
-
 
     if (testItem.checkbox) {
       if (!selected.find(item => item.test === testItem.test)) {
@@ -60,7 +61,7 @@ const SampleForm3: React.FC<SampleForm3Props> = ({ nextStep, handleFormChange, f
           test: testItem.test,
           bgColor: testItem.bgColor,
           color: testItem.color
-        })
+        });
       }
     } else {
       const updatedSelected = selected.filter(item => item.test !== testItem.test);
@@ -68,8 +69,9 @@ const SampleForm3: React.FC<SampleForm3Props> = ({ nextStep, handleFormChange, f
       return;
     }
 
-    setSelectedTests(selected)
+    setSelectedTests(selected);
   };
+
   const handleSearchTest = () => {
     const result = DATA.filter(item =>
       item.test.toLowerCase().includes(searchItem.toLowerCase())
@@ -82,8 +84,9 @@ const SampleForm3: React.FC<SampleForm3Props> = ({ nextStep, handleFormChange, f
     setSelectAll(newSelect);
 
     const updatedTest = tests.map(test => ({
-      ...test, checkbox: newSelect
-    }))
+      ...test, 
+      checkbox: newSelect
+    }));
     setTests(updatedTest);
 
     if (newSelect) {
@@ -91,92 +94,89 @@ const SampleForm3: React.FC<SampleForm3Props> = ({ nextStep, handleFormChange, f
         test: test.test,
         bgColor: test.bgColor,
         color: test.color
-      })))
+      })));
     } else {
       setSelectedTests([]);
     }
-  }
-
-  const { submitSample } = useCreateSampleStore();
+  };
 
   const handleSampleSubmit = () => {
-   
-    submitSample(formData,nextStep);
-  }
-
-
+    submitSample(formData, nextStep);
+  };
 
   useEffect(() => {
     setFormData((prev: any) => ({
-      ...prev, testType: selectedTests.map(test => test.test)
+      ...prev, 
+      testType: selectedTests.map(test => test.test)
     }));
-    console.log(formData)
-  }, [selectedTests]);
-
+  }, [selectedTests, setFormData]);
 
   return (
-    <div className="flex gap-4">
-      {/* Left Side */}
-      <main className="bg-white w-2/3 flex flex-col gap-2 py-3 px-6">
-        <h1 className="text-lg font-semibold">Sample Details</h1>
+    <div className="flex flex-col lg:flex-row gap-4 w-full p-4">
+      {/* Left Side - Test Selection */}
+      <main className="bg-white w-full lg:w-2/3 flex flex-col gap-4 p-4 md:p-6 rounded-lg shadow-sm">
+        <h1 className="text-lg md:text-xl font-semibold">Sample Details</h1>
 
         {/* Search and Filter Section */}
-        <div className="flex w-full mb-5">
-          <select className="w-1/3 bg-neutral-200 px-3 py-2 border border-neutral-300 focus:outline-none focus:border-[#01368B] text-xs h-full">
+        <div className="flex flex-col sm:flex-row w-full gap-2 mb-4">
+          <select className="w-full sm:w-1/3 bg-neutral-100 px-3 py-2 border border-neutral-300 focus:outline-none focus:border-[#01368B] text-sm rounded-md">
             <option value="filter">Filter</option>
             <option value="Alphabetically">Alphabetically</option>
             <option value="category">Category</option>
           </select>
-          <input
-            placeholder="Search Test"
-            className="w-full bg-white px-3 py-2 border border-neutral-300 focus:outline-none focus:border-[#01368B] text-xs h-full"
-            value={searchItem}
-            onChange={(e) => setSearchItem(e.target.value)}
-
-          />
-          <input
-            type="submit"
-            value="Submit"
-            className="w-1/3 bg-blue-300 px-3 py-2 border border-neutral-300 focus:outline-none focus:border-[#01368B] text-xs h-full cursor-pointer"
-            onClick={handleSearchTest}
-          />
+          <div className="flex w-full">
+            <input
+              placeholder="Search Test"
+              className="flex-1 bg-white px-3 py-2 border border-neutral-300 focus:outline-none focus:border-[#01368B] text-sm rounded-l-md"
+              value={searchItem}
+              onChange={(e) => setSearchItem(e.target.value)}
+            />
+            <button
+              type="button"
+              className="bg-[#01368B] px-4 py-2 text-white text-sm rounded-r-md hover:bg-[#012a6e] transition-colors"
+              onClick={handleSearchTest}
+            >
+              Search
+            </button>
+          </div>
         </div>
 
         {/* Select All */}
-        <div className="w-full flex justify-between mb-2">
-          <p>All</p>
-          <div className="flex gap-2">
+        <div className="w-full flex justify-between items-center mb-2">
+          <p className="text-sm md:text-base">All Tests</p>
+          <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
               checked={selectAll}
               onChange={handleSelectAll}
+              className="w-4 h-4 rounded border-gray-300 text-[#01368B] focus:ring-[#01368B]"
             />
-            <p>Select all tests</p>
-          </div>
+            <span className="text-sm md:text-base">Select all tests</span>
+          </label>
         </div>
 
         {/* Test List */}
-        <div className="flex flex-col gap-3 mt-2">
+        <div className="flex flex-col gap-3 overflow-y-auto max-h-[400px]">
           {tests.map((item, index) => (
             <div
               key={index}
-              className={`flex items-center justify-between p-3 border border-neutral-400 ${item.checkbox ? "bg-neutral-100" : "bg-white"
-                }`}
+              className={`flex items-center justify-between p-3 border rounded-lg ${
+                item.checkbox ? "bg-neutral-50 border-[#01368B]" : "bg-white border-neutral-200"
+              }`}
             >
-              {/* Custom Checkbox */}
-              <label className="relative flex items-center cursor-pointer">
+              <label className="relative flex items-center space-x-3 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={item.checkbox}
                   onChange={() => handleCheckboxChange(index)}
-                  className="peer hidden"
+                  className="hidden"
                 />
-                <div className="w-5 h-5 border-[1px] border-gray-400 bg-white rounded-md flex items-center justify-center peer-checked:border-green-500">
+                <div className="w-5 h-5 border border-gray-300 rounded-md flex items-center justify-center transition-colors">
                   {item.checkbox && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
-                      fill="green"
+                      fill="#01368B"
                       className="w-4 h-4"
                     >
                       <path
@@ -187,14 +187,11 @@ const SampleForm3: React.FC<SampleForm3Props> = ({ nextStep, handleFormChange, f
                     </svg>
                   )}
                 </div>
+                <span className="text-sm md:text-base font-medium">{item.test}</span>
               </label>
 
-              {/* Test Name */}
-              <p className="text-sm font-medium">{item.test}</p>
-
-              {/* Test Label with Unique Color */}
               <span
-                className="text-xs font-semibold px-3 py-1 rounded-lg"
+                className="text-xs font-semibold px-3 py-1 rounded-lg whitespace-nowrap"
                 style={{ backgroundColor: item.bgColor, color: item.color }}
               >
                 {item.testLabel}
@@ -202,46 +199,46 @@ const SampleForm3: React.FC<SampleForm3Props> = ({ nextStep, handleFormChange, f
             </div>
           ))}
         </div>
-
-
       </main>
 
-      {/* Selection Summary */}
-
-      <main className=" flex flex-col gap-5">
-
-
-        <div className="flex items-center justify-center">
-
-
-          <div className="bg-white border-[1px] w-3/4 h-64 flex items-center flex-col p-4 shadow-lg rounded-md">
-            <p className="text-center font-semibold text-lg mb-3">Selection Summary</p>
-            <hr className="mb-3 border-gray-300" />
-            <ul className="grid grid-cols-2 gap-1 p-1">
+      {/* Right Side - Selection Summary */}
+      <div className="w-full lg:w-1/3 flex flex-col gap-4">
+        <div className="bg-white border rounded-lg shadow-sm p-4 md:p-6">
+          <h2 className="text-center font-semibold text-lg md:text-xl mb-3">Selection Summary</h2>
+          <hr className="mb-4 border-gray-200" />
+          
+          {selectedTests.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[200px] overflow-y-auto">
               {selectedTests.map((item, index) => (
-                <li key={index} className="text-xs font-medium px-2 py-1 rounded-full text-center">
-                  <p
-                    className="text-white px-4 py-2 rounded-full text-center text-sm w-full font-light shadow-md"
-                    style={{ backgroundColor: item.bgColor, color: item.color }}
-                  >
-                    {item.test}
-                  </p>
-                </li>
+                <div
+                  key={index}
+                  className="text-sm font-medium px-3 py-2 rounded-full text-center shadow-sm"
+                  style={{ backgroundColor: item.bgColor, color: item.color }}
+                >
+                  {item.test}
+                </div>
               ))}
-            </ul>
-          </div>
+            </div>
+          ) : (
+            <p className="text-center text-gray-500 text-sm">No tests selected</p>
+          )}
         </div>
 
-        <div className='w-[400px] flex items-center justify-center'>
-          <button type='button' className='bg-[#01368B] w-1/2 flex items-center justify-center gap-3 text-white p-2 rounded-md' onClick={handleSampleSubmit}>
-            <p>Continue</p>
-            <ArrowRight size={24} />
-          </button>
-        </div>
-      </main>
+        <button
+          type="button"
+          onClick={handleSampleSubmit}
+          disabled={selectedTests.length === 0}
+          className={`w-full flex items-center justify-center gap-2 text-white p-3 rounded-md ${
+            selectedTests.length === 0 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-[#01368B] hover:bg-[#012a6e]'
+          } transition-colors`}
+        >
+          <span>Continue</span>
+          <ArrowRight size={20} />
+        </button>
+      </div>
     </div>
-
-
   );
 };
 

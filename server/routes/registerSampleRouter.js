@@ -1,5 +1,5 @@
 import express from 'express';
-import {registerSample,getRegsteredSample,getSample,updateSample,searchSample,deleteSample} from '../controller/registerSampleController.js';
+import {registerSample,getRegsteredSample,getSample,updateSample,searchSample,deleteSample,getNotifications} from '../controller/registerSampleController.js';
 import verifyToken from '../middleware/verifyToken.js';
 import { authorizeRoles } from '../middleware/authorizeRoles.js';
 const router = express.Router();
@@ -11,5 +11,5 @@ router.get("/samples",getRegsteredSample);
 router.get("/sample/:id",getSample);
 router.get("/search",searchSample);
 router.delete("/delete-sample/:id",verifyToken, authorizeRoles("admin"),deleteSample)
-
+router.get("/notifications",verifyToken,authorizeRoles("admin", "receptionist"),getNotifications)
 export default router;

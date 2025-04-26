@@ -16,9 +16,13 @@ export default function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  if (!isAuthenticated && pathname !== "/login" && pathname !== "/register") {
+  if (!isAuthenticated && pathname !== "/login" && pathname !== "/register" ) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
+
+  // if(pathname === "/login"){
+  //   return NextResponse.redirect(new URL("/start",req.url))
+  // }
 
   if (isAuthenticated && (pathname === "/login" || pathname === "/register")) {
     return NextResponse.redirect(new URL("/dashboard", req.url));

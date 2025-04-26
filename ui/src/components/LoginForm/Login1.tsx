@@ -6,7 +6,11 @@ import User from "../../../assets/Frame 33800.png";
 import { CheckCircle } from "lucide-react";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-const Login1 = () => {
+
+interface Login1Prop {
+    nextStep:()=> void
+}
+const Login1:React.FC<Login1Prop> = ({nextStep}) => {
     const [selected, setSelected] = useState<string | null>("box1");
 
     const handleClick = (box: string) => {
@@ -42,12 +46,12 @@ const Login1 = () => {
                 </div>
             </div>
 
-            <Link href="/">
-                <button type='button' className='bg-[#01368B] w-40 flex items-center justify-center gap-3 text-white p-2 rounded-md' >
+      
+                <button type='button' className='bg-[#01368B] w-40 flex items-center justify-center gap-3 text-white p-2 rounded-md' onClick={nextStep} >
                     <p className="text-[0.9rem]">Get started</p>
                     <ArrowRight size={20} />
                 </button>
-            </Link>
+      
         </main>
     );
 };

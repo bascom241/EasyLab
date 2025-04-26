@@ -52,7 +52,63 @@ const register = asyncHandler(async (req, res) => {
     res.status(201).json({ success: true, user })
 
 })
+const editUser = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    
+   
+    // Validate request body exists
+    if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({ 
+            success: false,
+            message: "No update data provided" 
+        });
+    }
 
+    try {
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { $set: req.body },
+            { 
+                new: true,
+                runValidators: true,
+                context: 'query' // Ensures validators run with the update
+            }
+        );
+
+        console.log(updatedUser)
+
+        if (!updatedUser) {
+            return res.status(404).json({ 
+                success: false,
+                message: "User not found" 
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: updatedUser,
+            message: "User profile updated successfully"
+        });
+
+    } catch (error) {
+        // Handle validation errors
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return res.status(400).json({
+                success: false,
+                message: 'Validation error',
+                errors: messages
+            });
+        }
+        
+        // Handle other errors
+        res.status(500).json({
+            success: false,
+            message: "Server error while updating user",
+            error: error.message
+        });
+    }
+});
 const verifyEmail = asyncHandler(async (req, res) => {
     const { code } = req.body;
     if (!code) return res.status(403).json({ success: false, message: "Verification code is required" });
@@ -148,7 +204,7 @@ const checkAuth = asyncHandler(async (req,res)=>{
     res.status(200).json({success:true,user})
 })
 
-export { register, verifyEmail,login,forgotPassword,resetPassword,checkAuth,logout}
+export { register, verifyEmail,login,forgotPassword,resetPassword,checkAuth,logout, editUser}
 
 
 

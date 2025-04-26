@@ -87,6 +87,7 @@ export const useCreateSampleStore = create<SampleStoreState>((set) => ({
         }
     },
     fetchSamples: async (page: number, limit: number, params: {}) => {
+
         set({isLoading:true})
         try {
             const response = await axiosInstance.get("/sample/samples", {
@@ -97,8 +98,12 @@ export const useCreateSampleStore = create<SampleStoreState>((set) => ({
             console.log(response);
             set({isLoading:false})
 
-        } catch (error) {
-            console.log(error);
+        } catch (err) {
+          
+            if (err instanceof Error) {
+                console.log((err as any).response.message)
+                toast.error((err as any).response.data.message)
+            }
             set({isLoading:false})
         }
 

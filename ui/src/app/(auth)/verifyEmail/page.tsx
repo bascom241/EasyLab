@@ -5,6 +5,8 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { useRouter } from 'next/navigation'
 import { Loader } from 'lucide-react'
 import { Toaster,toast } from 'sonner'
+
+
 interface HandleChangeEvent {
     target: {
         value: string;
@@ -14,7 +16,7 @@ interface HandleChangeEvent {
 const VerifyEmail = () => {
     const [otp, setOtp] = useState(new Array(6).fill(""));
     const otpString = otp.join("");
-    const { verifyEmail,isVerifyingEmail } = useAuthStore();
+    const { verifyEmail,isVerifyingEmail,authUser } = useAuthStore();
 
     const router = useRouter();
 
@@ -106,7 +108,7 @@ const VerifyEmail = () => {
                         Please Check Your Email
                     </h1>
                     <p className='text-center mt-2 text-zinc-500  '>
-                        We have sent a code <span className=' text-black font-semibold'>abdulwahab21@gnail.com</span>
+                        We have sent a code <span className=' text-black font-semibold'>{authUser?.email}</span>
                     </p>
                 </div>
 
