@@ -139,6 +139,7 @@ const SampleForm2: React.FC<SampleForm2Props> = ({ nextStep, formData, handleFor
                             value={formData.ward}
                             onChange={handleFormChange}
                         >
+                            
                             <option value="femaleSurgicalWard">Female Surgical Ward</option>
                             <option value="maleSurgicalWard">Male Surgical Ward</option>
                             <option value="ENT">ENT</option>

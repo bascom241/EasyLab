@@ -58,20 +58,21 @@ const Register = () => {
             toast.error("Password must be at least 6 characters long")
             return false;
         }
+
+        return true
     }
 
-
-    const handleSumit = async (e: React.ChangeEvent<HTMLFormElement>) => {
-        e.preventDefault()
+    const handleSumit = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault(); 
+    
         try {
             const isValid = validateUser();
             if (!isValid) return;
             await signUp(formData, nextStep);
         } catch (err) {
-            console.log(err)
-
+            console.log(err);
         }
-    }
+    };
     return (
         <>
 

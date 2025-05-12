@@ -76,13 +76,17 @@ const SampleForm1: React.FC<SampleForm1Props> = ({ nextStep, handleFormChange, f
                     <div className='flex flex-col gap-2 w-full'>
                         <label htmlFor='gender' className='text-sm sm:text-base'>Gender</label>
                         <select
+                            
                             value={formData.gender}
                             name="gender"
                             onChange={handleFormChange}
                             className='w-full bg-neutral-100 px-3 py-2 sm:px-4 sm:py-2 border-[1px] focus:outline-none focus:border-[#01368B] border-neutral-200 rounded-md cursor-pointer text-sm sm:text-base'
                         >
+
+                            <option value="" disabled >Select Gender</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
+
                         </select>
                     </div>
                 </div>
@@ -115,8 +119,8 @@ const SampleForm1: React.FC<SampleForm1Props> = ({ nextStep, handleFormChange, f
 
                 {/* Continue Button */}
                 <div className='w-full sm:w-[400px] flex justify-center sm:justify-start mt-2'>
-                    <button 
-                        type='button' 
+                    <button
+                        type='button'
                         className='bg-[#01368B] w-full sm:w-1/2 flex items-center justify-center gap-2 sm:gap-3 text-white p-2 rounded-md hover:bg-[#012a6e] transition-colors'
                         onClick={nextStep}
                     >

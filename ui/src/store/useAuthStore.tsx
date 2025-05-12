@@ -43,6 +43,9 @@ export const useAuthStore = create<AuthState>((set) => ({
             nextStep();
             console.log(response)
         } catch (err) {
+            if(err instanceof Error){
+                toast.error((err as any).response.message);
+            }
             set({ isSignUp: false })
             console.log(err)
         }

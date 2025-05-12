@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { axiosInstance } from "@/lib/axios";
 import { toast } from 'sonner';
+
 type SampleDataType = {
     _id: string,
     surName: string;
@@ -25,6 +26,16 @@ type SampleDataType = {
 };
 
 
+interface IssueType {
+    _id:string
+    sampleNumber:string
+    issueType:string
+    priorityLevel:string
+    issue:string 
+    email:string
+
+}
+
 interface SampleStoreState {
     isSubmitingSample: boolean;
     submitSample: (formData: object, nextStep: () => void) => Promise<void>
@@ -42,6 +53,16 @@ interface SampleStoreState {
     isDeletingSample:boolean
     results:SampleDataType[] | null
     isLoading: boolean 
+    createIssue:(formData:object)=> Promise<boolean | undefined>
+    isCreatingIssue:boolean
+    submitSuccess:boolean
+    fetchingIssue:boolean
+    fetchIssues: () => Promise<void>
+    fetchReports:(query:string) => Promise<void>
+    isGettingReportsQuery:boolean
+    reports:IssueType[]
+    searchReports:IssueType[]
+    clearSearchResults: () => void
 }
 
 export const useCreateSampleStore = create<SampleStoreState>((set) => ({
@@ -55,6 +76,12 @@ export const useCreateSampleStore = create<SampleStoreState>((set) => ({
     editingModal: false,
     isDeletingSample:false,
     isLoading:false,
+    isCreatingIssue:false,
+    submitSuccess:false,
+    fetchingIssue:false,
+    isGettingReportsQuery:false,
+    reports:[],
+    searchReports:[],
     submitSample: async (formData: object, nextStep: () => void) => {
         try {
             set({ isSubmitingSample: true })
@@ -156,5 +183,62 @@ export const useCreateSampleStore = create<SampleStoreState>((set) => ({
         } finally{
             set({isDeletingSample:false})
         }
+    },
+    createIssue:async(formData:object) => {
+        set({isCreatingIssue:true})
+        try{
+
+            const response = await axiosInstance.post("/sample/create-issue", formData);
+            console.log(response)
+            toast.success(response.data.message);
+            set({isCreatingIssue:false})
+            set({submitSuccess:true})
+            return true
+        }catch(err){
+            set({isCreatingIssue:false})
+            if(err instanceof Error){
+                toast.error((err as any).response.data.message)
+            }else{  
+                toast.error("Something went wrong")
+            }
+        }finally{
+            set({isCreatingIssue:false})
+        }
+    },
+
+    fetchIssues:async () => {
+        try {
+            set({fetchingIssue:true})
+            const response = await axiosInstance.get("/sample/issues");
+            set({reports:response.data.data})
+            set({fetchingIssue:false});
+
+        } catch (error) {
+            if(error instanceof Error){
+                toast.error(error.message);
+            }
+        }finally{
+            set({fetchingIssue:false})
+        }
+    },
+    fetchReports:async(query:string)=> {
+        set({isGettingReportsQuery: true})
+        try{
+            const response = await axiosInstance.get(`/sample/reports?search=${query}`);
+            set({searchReports:response.data.issues})
+            set({isGettingReportsQuery:false})
+        }catch(error){
+            if(error instanceof Error){
+                toast.error(error.message)
+            }
+            set({isGettingReportsQuery:false})
+        }finally{
+            set({isGettingReportsQuery:false})
+        }
+  
+        
+    }, 
+    clearSearchResults:() => {
+        set({searchReports:[]})
     }
 }))

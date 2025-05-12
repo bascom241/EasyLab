@@ -7,22 +7,19 @@ export default function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl;
 
-  // ⛔ Ignore static files and Next.js internals
+  // Skip static files, internal files, and API routes
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/static") ||
+    pathname.startsWith("/api") || 
     pathname === "/favicon.ico"
   ) {
     return NextResponse.next();
   }
 
-  if (!isAuthenticated && pathname !== "/login" && pathname !== "/register" ) {
+  if (!isAuthenticated && pathname !== "/login" && pathname !== "/register" && !pathname.startsWith("/payment-success")) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
-
-  // if(pathname === "/login"){
-  //   return NextResponse.redirect(new URL("/start",req.url))
-  // }
 
   if (isAuthenticated && (pathname === "/login" || pathname === "/register")) {
     return NextResponse.redirect(new URL("/dashboard", req.url));

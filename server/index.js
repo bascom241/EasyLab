@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser'
 import sampleRouter from './routes/registerSampleRouter.js'
 import {createServer} from 'http';
 import { Server } from 'socket.io';
-
+import paymentRouter from './routes/paymentRouter.js'
 dotenv.config();
 const app = express();
 const server = createServer(app);
@@ -31,7 +31,7 @@ export {io}
 // Configuration
 
 app.use(cookieParser());
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: ["http://localhost:3000","http://localhost:3001"], credentials: true }));
 app.use(express.json());
 
 
@@ -39,6 +39,7 @@ app.use(express.json());
 
 app.use("/api", userRouter);
 app.use("/api/sample", sampleRouter);
+app.use("/api/payment", paymentRouter);
 const port = process.env.PORT || 5000;
 
 

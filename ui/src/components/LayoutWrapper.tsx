@@ -6,7 +6,7 @@ import { Menu, X } from 'lucide-react'; // Importing Menu and X icons from lucid
 
 const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
     const pathName = usePathname();
-    const hideSidebar = pathName === "/login" || pathName === "/register" || pathName === "/verifyEmail";
+    const hideSidebar = pathName === "/login" || pathName === "/register" || pathName === "/verifyEmail" || pathName === "/payment-success";
     const [isMobile, setIsMobile] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 

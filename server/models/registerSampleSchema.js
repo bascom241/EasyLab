@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import validator from 'validator';
-
-
+import Payment from "./paymentSchema.js";
 const registerSampleSchema = new mongoose.Schema({
     surName: {
         type: String,
@@ -18,7 +17,7 @@ const registerSampleSchema = new mongoose.Schema({
     gender: {
         type: String,
         enum: ["male", "female"],
-        required: [true, "gender is required"]
+        required: [true, "gender is required "]
     },
     hospitalNumber: {
         type: String,
@@ -62,8 +61,57 @@ const registerSampleSchema = new mongoose.Schema({
     },
     dateOfSpecimen:{
         type:String
+    },
+    paid:{
+        type:Boolean,
+        default:false
+    },
+    paymentReference:{
+        type:String,
+
+    },
+    user:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        required:true
     }
 },{timestamps:true});
+// This is a bussiness logic before saving for payment Check
+registerSampleSchema.pre("save", async function(next){
+    const user = this.user;
+    const now = new Date();
+    const startsOfDay = new Date(now.setHours(0,0,0,0)) ;
+
+
+    const activePayment = await Payment.findOne({
+        user:user,
+        status:"successful",
+        expiryDate:{$gte:now}
+    })
+
+    if(activePayment){
+        this.paid = true 
+        this.paymentReference = activePayment.paymentReference
+        return next()
+    }
+
+    console.log("Active Payment:", activePayment)
+
+    const todaysSamplesCount = await RegisterSample.countDocuments({
+        user,
+        createdAt:{$gte:startsOfDay},
+        paid:false
+    });
+
+    if (todaysSamplesCount >= 2) {
+        throw new Error('Daily free sample limit reached. Please make a payment to continue.');
+      }
+      
+
+      console.log("Sample Count:", todaysSamplesCount)
+    next();
+
+})
 
 const RegisterSample = mongoose.model("RegisterSample", registerSampleSchema);
 export default RegisterSample;

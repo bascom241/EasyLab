@@ -3,6 +3,7 @@ import asyncHandler from "express-async-handler";
 import { validateSampleFields } from "../utils/validator.js";
 import { io } from "../index.js";
 import Notifications from "../models/notificatonSchema.js";
+import Issue from "../models/issueSchema.js";
 const requiredFields = [
     "surName",
     "otherNames",
@@ -37,29 +38,32 @@ const registerSample = asyncHandler(async (req, res) => {
             acc[field] = req.body[field];
             return acc;
         }, {});
+        const newSample = new RegisterSample({
+            ...sampleData,
+            user: req.user.userId, // adapt based on your auth setup
+        });
 
-        const newSample = new RegisterSample(sampleData);
         await newSample.save();
 
 
         const notification = new Notifications({
-            tittle:"New Sample Registered",
-            message:   `Sample with Consultant ${newSample.requestersInformation.consultant} has been registered`
+            tittle: "New Sample Registered",
+            message: `Sample with Consultant ${newSample.requestersInformation.consultant} has been registered`
 
         })
 
         await notification.save();
 
-        io.emit("new-notification",{
+        io.emit("new-notification", {
             id: notification._id,
-            title: notification.title,
+            title: notification.tittle,
             message: notification.message,
             createdAt: notification.createdAt,
             isRead: notification.isRead,
         })
         res.status(201).json({ message: "Congratulations! You have successfully saved your sample", sampleId: newSample._id });
     } catch (error) {
-        console.error("Error registering sample:", error);
+        console.error("Error registering sample:", error.message);
         res.status(500).json({ message: "An error occurred while registering the sample" });
     }
 });
@@ -159,34 +163,116 @@ const searchSample = async (req, res) => {
     }
 };
 
-const deleteSample = async (req,res) => {
+const deleteSample = async (req, res) => {
 
-    const {id} = req.params;
+    const { id } = req.params;
     try {
-        const sample = await RegisterSample.findByIdAndDelete(id); 
+        const sample = await RegisterSample.findByIdAndDelete(id);
 
-        if(!sample){
-            return res.status(404).json({message:"Sample not found"})
+        if (!sample) {
+            return res.status(404).json({ message: "Sample not found" })
         }
-        res.status(200).json({message:"Sample deleted successfully"})
+        res.status(200).json({ message: "Sample deleted successfully" })
     } catch (error) {
         console.log(error);
-        res.status(500).json({message:error.message})
+        res.status(500).json({ message: error.message })
     }
 }
 
 
 // Notifications Logic 
 
-const getNotifications = async (req,res) => {
+const getNotifications = async (req, res) => {
     try {
         const notifications = await Notifications.find().sort();
-        if(!notifications){
-            return res.status(401).json({message:"Notifications Not Found"})
+        if (!notifications) {
+            return res.status(401).json({ message: "Notifications Not Found" })
         }
-        res.status(200).json({ data:notifications,notificatonLength:notifications.length, message:"All Notifications"})
+        res.status(200).json({ data: notifications, notificatonLength: notifications.length, message: "All Notifications" })
     } catch (error) {
-        res.status(500).json({message:error.message})
+        res.status(500).json({ message: error.message })
     }
 }
-export { registerSample, getRegsteredSample, getSample, updateSample, searchSample, deleteSample,getNotifications};
+
+const deleteNotification = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const notification = await Notifications.findByIdAndDelete(id);
+        if (!notification) {
+            return res.status(404).json({ message: "Notification not found" })
+        }
+        res.status(200).json({ message: "Notification deleted successfully" })
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+}
+
+const createIssue = async (req, res) => {
+    try {
+        const { sampleNumber, name, issueType, priorityLevel, issue, email } = req.body;
+        const requiredFields = ['sampleNumber', 'name', 'issueType', 'priorityLevel', 'issue'];
+        const missingFields = requiredFields.filter(field => !req.body[field]);
+        if (missingFields.length > 0) {
+            return res.status(400).json({ message: `Missing fields: ${missingFields.join(', ')}` });
+        }
+
+        const newIssue = new Issue({
+            sampleNumber,
+            name,
+            issueType,
+            priorityLevel,
+            issue,
+            email
+        })
+        await newIssue.save();
+        res.status(201).json({ message: "Issue created successfully", issueId: newIssue._id });
+    } catch (error) {
+        console.error('Error creating issue:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+const getIssues = async (req, res) => {
+    try {
+        const issues = await Issue.find();
+        if (!issues) {
+            return res.status(401).json({ message: "Issues Not Found" })
+        }
+        res.status(200).json({ data: issues, issuesLength: issues.length, message: "All Issues" })
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+const fetchReports = async (req, res) => {
+    const { search } = req.query;
+
+
+    try {
+        // Query the DataBase for data that match the following
+        const issues = await Issue.find({
+            $or:[
+                {issueType:{$regex: search, $options: "i"}},
+                {priorityLevel:{$regex:search, $options: "i"}},
+                // {sampleNumber:{$regex:search, $options: "i"}}
+            ]
+        });
+        // I want to return empty Data if samples are not found
+        if (issues.length < 1) {
+            return res.status(404).json({issues:[], message: "No Sample Found"})
+        }
+        res.status(200).json({ issues })
+    } catch (err) {
+        // for debugging 
+        console.log(err)
+        res.status(500).json({message:"An nternal error Occured"})
+    }
+
+
+  
+
+
+
+
+}
+export { registerSample, getRegsteredSample, getSample, updateSample, searchSample, deleteSample, getNotifications, deleteNotification, createIssue, getIssues, fetchReports };

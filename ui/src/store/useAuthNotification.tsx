@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { axiosInstance } from '@/lib/axios';
-
+import { toast } from 'sonner';
 interface Notification {
   _id: string;
   title: string;
@@ -21,6 +21,7 @@ interface NotificationAuth {
   notifications: Notification[];
   setNotifications: (notifications: Notification[] | ((prev: Notification[]) => Notification[])) => void;
   fetchNotifications: () => Promise<void>;
+  deleteNotification:(id:string)=>Promise<void>
 }
 
 const useNotification = create<NotificationAuth>((set) => ({
@@ -40,6 +41,23 @@ const useNotification = create<NotificationAuth>((set) => ({
       }
       // Optionally set an empty array on error
       set({ notifications: [] });
+    }
+  },
+
+  deleteNotification:async(id:string) => {
+    try{
+      await axiosInstance.delete(`/sample/delete-notification/${id}`);
+      set((state)=>{
+        return{
+          notifications:state.notifications.filter((not)=> not._id !== id)
+        }
+      })
+      toast.success("Notification deleted successfully");
+    }catch(error){
+      if(error instanceof Error){
+        console.error("Error deleting notification:", error.message);
+        toast.error("Error deleting notification: " + error.message);
+      }
     }
   }
 }));
