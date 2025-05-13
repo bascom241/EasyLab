@@ -22,9 +22,12 @@ const SideBar = ({ isOpen, isMobile, onClose }: SideBarProps) => {
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const { logout } = useAuthStore();
   const router = useRouter();
-  const { notifications } = useNotification();
+  const { notifications,fetchNotifications } = useNotification();
   
-  const unreadCount = notifications?.filter(notif => !notif.read).length || 0;
+  useEffect(()=> {
+    fetchNotifications()
+  }, [fetchNotifications])
+  const unreadCount = notifications?.filter(notif => !notif.isRead).length || 0;
 
   const handleLogout = () => {
     logout(router);

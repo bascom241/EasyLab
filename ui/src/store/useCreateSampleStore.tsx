@@ -92,6 +92,9 @@ export const useCreateSampleStore = create<SampleStoreState>((set) => ({
             console.log(sampleId);
         } catch (err) {
             console.log(err)
+            if (err instanceof Error) {
+                toast.error((err as any).response.data.message)
+            }
         }
 
     },

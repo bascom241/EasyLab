@@ -2,13 +2,13 @@
 import React, { useEffect } from 'react'
 import useNotification from '@/store/useAuthNotification'
 import { io } from 'socket.io-client'
-
+import {toast} from "sonner"
 interface Notification {
   _id: string;
   title: string;
   message: string;
   createdAt: string;
-  read?: boolean;
+  isRead?: boolean;
   type?: 'info' | 'success' | 'warning' | 'error';
 }
 
@@ -16,7 +16,7 @@ interface Notification {
 const socket = io('http://localhost:7000');
 
 const Notifications = () => {
-  const { fetchNotifications, notifications = [], setNotifications, deleteNotification } = useNotification();
+  const { fetchNotifications, notifications = [], readNotification, setNotifications, deleteNotification } = useNotification();
 
   useEffect(() => {
     socket.on("new-notification", (newNotification: Notification) => {
@@ -30,12 +30,20 @@ const Notifications = () => {
     };
   }, [fetchNotifications, setNotifications]);
 
-  const markAsRead = (id: string) => {
-    setNotifications(notifications.map(notif => 
-      notif._id === id ? { ...notif, read: true } : notif
-    ));
+  const markAsRead = async (id: string) => {
+    try {
+      await readNotification(id); 
+      // setNotifications((prev) =>
+      //   prev.map((notif) =>
+      //     notif._id === id ? { ...notif, read: true } : notif
+      //   )
+      // );
+    } catch (error) {
+      toast.error("Failed to mark as read");
+      console.error(error);
+    }
   };
-
+  
   const removeNotification = (id: string) => {
     deleteNotification(id);
   };
@@ -98,16 +106,16 @@ const Notifications = () => {
             <div 
               key={notif._id}
               className={`p-5 rounded-lg shadow-sm transition-all duration-200 border-l-4 ${
-                notif.read ? 'bg-gray-50' : `${getNotificationColor(notif.type)} shadow-md`
+                notif.isRead ? 'bg-gray-50' : `${getNotificationColor(notif.type)} shadow-md`
               } hover:shadow-lg`}
             >
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <div className="flex items-center mb-1">
-                    {!notif.read && (
+                    {!notif.isRead && (
                       <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
                     )}
-                    <h4 className={`font-semibold ${notif.read ? 'text-gray-700' : 'text-gray-900'}`}>
+                    <h4 className={`font-semibold ${notif.isRead ? 'text-gray-700' : 'text-gray-900'}`}>
                       {notif.title}
                     </h4>
                   </div>
@@ -124,7 +132,7 @@ const Notifications = () => {
                   ✕
                 </button>
               </div>
-              {!notif.read && (
+              {!notif.isRead && (
                 <div className="flex justify-end mt-3 space-x-2">
                   <button
                     onClick={() => markAsRead(notif._id)}

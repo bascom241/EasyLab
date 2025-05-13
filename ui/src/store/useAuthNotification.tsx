@@ -6,7 +6,7 @@ interface Notification {
   title: string;
   message: string;
   createdAt: string;
-  read?: boolean;
+  isRead?: boolean;
   type?: 'info' | 'success' | 'warning' | 'error';
 }
 
@@ -22,10 +22,13 @@ interface NotificationAuth {
   setNotifications: (notifications: Notification[] | ((prev: Notification[]) => Notification[])) => void;
   fetchNotifications: () => Promise<void>;
   deleteNotification:(id:string)=>Promise<void>
+  readNotification:(id:string) => Promise<void>
+  markingAsRead:boolean 
 }
 
 const useNotification = create<NotificationAuth>((set) => ({
   notifications: [],
+  markingAsRead:false,
   setNotifications: (notifications) => {
     set((state) => ({
       notifications: typeof notifications === 'function' ? notifications(state.notifications) : notifications
@@ -58,6 +61,28 @@ const useNotification = create<NotificationAuth>((set) => ({
         console.error("Error deleting notification:", error.message);
         toast.error("Error deleting notification: " + error.message);
       }
+    }
+  },
+  readNotification: async(id:string) => {
+        set({markingAsRead: true})
+    try {
+        const response = await axiosInstance.patch(`/sample/update-notification/${id}`);
+        // toast.success(response.data.message);
+        console.log(response)
+        set((state) => ({
+          notifications: state.notifications.map((notif) =>
+            notif._id === id ? { ...notif, isRead: true } : notif
+          ),
+          markingAsRead: false,
+        }));
+        
+    } catch (error) {
+
+      console.log(error)
+        if(error instanceof Error){
+          // toast.error((error as any).response.data.message)
+        }
+        set({markingAsRead:false})
     }
   }
 }));

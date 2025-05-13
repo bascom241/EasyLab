@@ -20,10 +20,10 @@ const io = new Server(server, {cors:{
 }})
 
 io.on("connection",(socket)=>{
-    console.log("User Conneted", socket.id);
+    // console.log("User Conneted", socket.id);
 
     socket.on("disconnect",()=>{
-        console.log("User disconnect:", socket.id)
+        // console.log("User disconnect:", socket.id)
     })
 })
 

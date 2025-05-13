@@ -1,5 +1,5 @@
 import express from 'express';
-import {registerSample,getRegsteredSample,getSample,updateSample,searchSample,deleteSample,getNotifications,deleteNotification, createIssue,getIssues, fetchReports} from '../controller/registerSampleController.js';
+import {registerSample,getRegsteredSample,getSample,updateSample,searchSample,deleteSample,getNotifications,deleteNotification, createIssue,getIssues, fetchReports, markNotification} from '../controller/registerSampleController.js';
 import verifyToken from '../middleware/verifyToken.js';
 import { authorizeRoles } from '../middleware/authorizeRoles.js';
 import { checkimit } from '../middleware/sampleLimit.js';
@@ -14,7 +14,7 @@ router.get("/search",searchSample);
 router.delete("/delete-sample/:id",verifyToken, authorizeRoles("admin"),deleteSample)
 router.get("/notifications",verifyToken,authorizeRoles("admin", "receptionist"),getNotifications)
 router.delete("/delete-notification/:id",verifyToken,authorizeRoles("admin"),deleteNotification)
-
+router.patch("/update-notification/:id", verifyToken,authorizeRoles("admin"),markNotification )
 // Issues Router
 router.post("/create-issue",verifyToken,authorizeRoles("admin"),createIssue)
 router.get("/issues",verifyToken,authorizeRoles("admin"),getIssues);

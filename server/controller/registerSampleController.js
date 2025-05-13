@@ -207,6 +207,34 @@ const deleteNotification = async (req, res) => {
     }
 }
 
+const markNotification = async (req,res) => {
+    const {id} = req.params
+    console.log(id)
+    try {
+        const notification = await Notifications.findById(id);
+        console.log(notification)
+        if(!notification) {
+            return res.status(404).json({message:"Notification not Found"})
+        }
+
+        console.log(notification)
+
+        if (notification.isRead) {
+            return res.status(400).json({ message: "Notification already marked as read" });
+          }
+      
+        notification.isRead = true;
+        await notification.save();
+
+        res.status(200).json({message:"Notification Read"})
+
+
+
+    } catch (error) {
+        res.status(500).json({message:error})
+    }
+}
+
 const createIssue = async (req, res) => {
     try {
         const { sampleNumber, name, issueType, priorityLevel, issue, email } = req.body;
@@ -275,4 +303,4 @@ const fetchReports = async (req, res) => {
 
 
 }
-export { registerSample, getRegsteredSample, getSample, updateSample, searchSample, deleteSample, getNotifications, deleteNotification, createIssue, getIssues, fetchReports };
+export { registerSample, getRegsteredSample, getSample, updateSample, searchSample, deleteSample, getNotifications, deleteNotification, createIssue, getIssues, fetchReports, markNotification };
