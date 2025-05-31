@@ -6,7 +6,7 @@ import {useRouter, useSearchParams } from 'next/navigation'
 
 import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
-
+export const dynamic = 'force-dynamic';
 const VerifyPayment = () => {
 const searchParams = useSearchParams();
 const router = useRouter();
