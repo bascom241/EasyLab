@@ -60,7 +60,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             set({ authUser: response.data })
             router.push("/dashboard")
             toast.success(response.data.message)
-            console.log(response.data.message)
+            set({isLogin:false});
 
         } catch (err) {
             set({ isLogin: false })
