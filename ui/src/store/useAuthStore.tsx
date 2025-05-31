@@ -19,7 +19,7 @@ interface AuthState {
     authUser: AuthUser | null
     signUp: (formData: object, nextStep: () => void) => Promise<void>
     checkAuth: () => Promise<void>
-    login: (formData: object, router: any) => Promise<void>
+    login: (formData: object) => Promise<boolean>
     logout: (router: any) => Promise<void>
     verifyEmail: (data: object, router: any) => Promise<void>
     editingUser: boolean,
@@ -52,15 +52,15 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     },
 
-    login: async (formData: object, router) => {
+    login: async (formData: object) => {
         set({ isLogin: true })
         
         try {
             const response = await axiosInstance.post("/login", formData);
-            set({ authUser: response.data })
-            router.push("/dashboard")
+            set({ authUser: response.data, isLogin:false })
+          
             toast.success(response.data.message)
-         
+            return true
 
         } catch (err) {
             set({ isLogin: false })
@@ -68,6 +68,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             if (err instanceof Error) {
                 toast.error((err as any).response.data.message)
             }
+            return false;
         }
     },
 
