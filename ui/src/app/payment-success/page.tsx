@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { usePaymentStore } from "@/store/usePayment";
-import {useRouter, useSearchParams } from 'next/navigation' 
-
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
-export const dynamic = 'force-dynamic';
-const VerifyPayment = () => {
-const searchParams = useSearchParams();
-const router = useRouter();
+
+// Your original component wrapped in Suspense
+const PaymentSuccessPage = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const reference = searchParams.get("reference");
   const { verifyPayment, isVerifyingPayment, message } = usePaymentStore();
 
@@ -35,9 +35,9 @@ const router = useRouter();
             Verifying Your Payment...
           </h1>
           <p className="text-gray-600 max-w-md">
-            We’re confirming your payment with our secure servers.
+            We're confirming your payment with our secure servers.
             <br />
-            Hang tight! This won’t take more than a few seconds.
+            Hang tight! This won't take more than a few seconds.
           </p>
           <p className="text-sm text-gray-400 italic">
             Did you know? 92% of our customers complete their setup in under 3
@@ -69,4 +69,20 @@ const router = useRouter();
   );
 };
 
-export default VerifyPayment;
+// Export with Suspense boundary
+export default function VerifyPayment() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col justify-center items-center h-screen">
+        <div className="animate-spin p-4 bg-blue-100 rounded-full shadow-md">
+          <Loader className="w-8 h-8 text-blue-600" />
+        </div>
+        <p className="mt-4 text-gray-600">Loading payment verification...</p>
+      </div>
+    }>
+      <PaymentSuccessPage />
+    </Suspense>
+  );
+}
+
+export const dynamic = 'force-dynamic';
