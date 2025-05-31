@@ -40,6 +40,7 @@ const Login2 = () => {
             return false;
         }
 
+        return true
     }
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -47,12 +48,11 @@ const Login2 = () => {
 
         console.log("Submitting.....")
         const isValid = validateUser();
-        if (!isValid){
-            login(formData, router);
-        } else{
-            return 
-        }
-      
+        if (isValid === false){
+               return 
+           
+        } 
+       login(formData, router);
     }
     return (
         <main className=' w-full sm:w-full bg-white flex flex-col items-center justify-center pt-16'>

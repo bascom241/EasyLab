@@ -58,9 +58,10 @@ export const useAuthStore = create<AuthState>((set) => ({
         try {
             const response = await axiosInstance.post("/login", formData);
             set({ authUser: response.data })
+            set({isLogin:false});
             router.push("/dashboard")
             toast.success(response.data.message)
-            set({isLogin:false});
+         
 
         } catch (err) {
             set({ isLogin: false })
