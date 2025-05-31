@@ -1,2 +1,4 @@
 /node_modules
 .env
+
+MONGO_URL=mongodb+srv://bascotee:omotosho123@eaylab.dbvhabw.mongodb.net/?retryWrites=true&w=majority&appName=EayLab
