@@ -15,8 +15,8 @@ const Login2 = () => {
     const router = useRouter();
 
     const [showPassword,setShowPassword] = useState(false);
-    const [policyCheck,setPolicyCheck] = useState(false);
-    console.log(policyCheck)
+
+   
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => {
@@ -40,11 +40,6 @@ const Login2 = () => {
             return false;
         }
 
-        if(policyCheck === false){
-            toast.error("You must agree to terms of service to sign in ")
-        }else{
-            return true
-        }
     }
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -115,10 +110,10 @@ const Login2 = () => {
                 <div className='flex flex-col items-center justify-center'>
                     <div className='flex gap-2'>
                         <input
-                        onChange={()=> setPolicyCheck(!policyCheck)}
+                     
                             className=''
                             type='checkbox'
-                            checked={true && policyCheck}
+                          
 
                         />
                         <p>By Signin Up Now You agree to our <span className='text-[#01368B]'> Term Of Service</span></p>
