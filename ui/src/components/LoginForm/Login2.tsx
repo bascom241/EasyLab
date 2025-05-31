@@ -101,19 +101,18 @@ const Login2 = () => {
         <div className="flex items-center w-full justify-center">
           <button
             type="submit"
-            disabled={isLogin}
-            className={`bg-[#01368B] w-1/2 flex items-center justify-center gap-3 text-white p-4 rounded-md ${
-              isLogin && "opacity-50 cursor-not-allowed"
-            }`}
+            // disabled={isLogin}
+            className={`bg-[#01368B] w-1/2 flex items-center justify-center gap-3 text-white p-4 rounded-md`}
           >
-            {isLogin ? (
+            {/* {isLogin ? (
               <Loader size={20} className="animate-spin" />
             ) : (
               <>
                 <p className="text-[0.9rem]">Continue</p>
                 <ArrowRight size={20} />
               </>
-            )}
+            )} */}
+            Login
           </button>
         </div>
 
