@@ -49,7 +49,8 @@ const Login2 = () => {
         if (!isValid) return;
         const success = await login(formData);
         if (success) {
-            router.push("/dashboard")
+        
+           window.location.href = "/dashboard";
         }else{
             toast.error("Cant Login")
         }
