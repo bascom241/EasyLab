@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const axiosInstance = axios.create({
-    baseURL:"http://localhost:7000/api",
+    baseURL:"https://easylab.onrender.com/api",
     withCredentials:true
 })
 
