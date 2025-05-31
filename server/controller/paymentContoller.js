@@ -53,7 +53,7 @@ const initializePayment = async (req, res) => {
                 {
                     email: email,
                     amount: amountInKobo,
-                    callback_url: "http://localhost:3000/payment-success",
+                    callback_url: "https://easylab.onrender.com/payment-success",
                     metadata: {
                         userId: user._id.toString()
                     }
