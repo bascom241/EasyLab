@@ -15,7 +15,7 @@ const server = createServer(app);
 
 connectDb();
 const io = new Server(server, {cors:{
-    origin:"http://localhost:3000",
+    origin:"https://easy-lab-ui.onrender.com",
     credentials:true
 }})
 
@@ -31,7 +31,7 @@ export {io}
 // Configuration
 
 app.use(cookieParser());
-app.use(cors({ origin: ["http://localhost:3000","http://localhost:3001"], credentials: true }));
+app.use(cors({ origin: "https://easy-lab-ui.onrender.com", credentials: true }));
 app.use(express.json());
 
 
