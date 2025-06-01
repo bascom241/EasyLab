@@ -145,12 +145,12 @@ const login = asyncHandler(async (req, res) => {
     if (!isPasswordMatch)
         return res.status(401).json({ message: "Email or password is Invalid" })
 
-    generateTokenAndSetCookie(res, user);
+    const token = generateTokenAndSetCookie(res, user);
     console.log(user)
 
     user.lastLogin = Date.now();
     await user.save();
-    res.status(200).json({ success: true, message: "User Logged in successfully" })
+    res.status(200).json({ token , user,  success: true, message: "User Logged in successfully" })
 
 
 })
