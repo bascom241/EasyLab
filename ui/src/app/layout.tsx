@@ -4,9 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { StepContextProvider } from "@/context/StepContext";
 import LayoutWrapper from "@/components/LayoutWrapper";
-import SideBar from "@/components/SideBar";
 import { Toaster } from "sonner";
-import AuthCheck from "@/components/AuthCheck";
+import { AuthProvider } from "../../AuthProvider";// Your new AuthProvider
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,12 +30,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <StepContextProvider>
-          <AuthCheck />
-          <Navbar />
-          <LayoutWrapper>{children}</LayoutWrapper>
-          <Toaster position="bottom-right" />
-        </StepContextProvider>
+        {/* Wrap everything with AuthProvider */}
+        <AuthProvider>
+          <StepContextProvider>
+            <Navbar />
+            <LayoutWrapper>
+              {/* Children will be automatically protected by individual ProtectedRoute components */}
+              {children}
+            </LayoutWrapper>
+            <Toaster position="bottom-right" />
+          </StepContextProvider>
+        </AuthProvider>
       </body>
     </html>
   );
