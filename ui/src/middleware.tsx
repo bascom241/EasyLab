@@ -5,6 +5,7 @@ export default function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value || null;
   console.log("Token:", token);
   const isAuthenticated = token !== null;
+  console.log("Is Authenticated:", isAuthenticated);
 
   const { pathname } = req.nextUrl;
 

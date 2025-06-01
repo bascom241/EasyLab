@@ -3,7 +3,7 @@ import asyncHandler from 'express-async-handler';
 
 const verifyToken = asyncHandler(async (req,res,next)=>{
     const token = req.cookies.token;
-
+    console.log("Token:", token);
     if(!token) return res.status(401).json({message:"Token is missing"});
 
 

@@ -1,9 +1,9 @@
 import User from "../models/userSchema.js";
-import {validateFields} from "../utils/validator.js";
+import { validateFields } from "../utils/validator.js";
 import asyncHandler from "express-async-handler"
 import generateTokenAndSetCookie from "../utils/generateTokenAndSetToken.js";
 import bcrypt from 'bcryptjs';
-import {sendEmail,sendPasswordResetEmail,sendResetSuccessfullEmail} from "../utils/sendEmails.js";
+import { sendEmail, sendPasswordResetEmail, sendResetSuccessfullEmail } from "../utils/sendEmails.js";
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -54,13 +54,13 @@ const register = asyncHandler(async (req, res) => {
 })
 const editUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    
-   
+
+
     // Validate request body exists
     if (!req.body || Object.keys(req.body).length === 0) {
-        return res.status(400).json({ 
+        return res.status(400).json({
             success: false,
-            message: "No update data provided" 
+            message: "No update data provided"
         });
     }
 
@@ -68,7 +68,7 @@ const editUser = asyncHandler(async (req, res) => {
         const updatedUser = await User.findByIdAndUpdate(
             id,
             { $set: req.body },
-            { 
+            {
                 new: true,
                 runValidators: true,
                 context: 'query' // Ensures validators run with the update
@@ -78,9 +78,9 @@ const editUser = asyncHandler(async (req, res) => {
         console.log(updatedUser)
 
         if (!updatedUser) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 success: false,
-                message: "User not found" 
+                message: "User not found"
             });
         }
 
@@ -100,7 +100,7 @@ const editUser = asyncHandler(async (req, res) => {
                 errors: messages
             });
         }
-        
+
         // Handle other errors
         res.status(500).json({
             success: false,
@@ -112,7 +112,7 @@ const editUser = asyncHandler(async (req, res) => {
 const verifyEmail = asyncHandler(async (req, res) => {
     const { code } = req.body;
     if (!code) return res.status(403).json({ success: false, message: "Verification code is required" });
-  
+
     const user = await User.findOne({
         verificationToken: { $exists: true },
         verificationTokenExpiresDate: { $gte: Date.now() }
@@ -131,43 +131,43 @@ const verifyEmail = asyncHandler(async (req, res) => {
 
 })
 
-const login = asyncHandler(async(req,res)=>{
-    const {email, password} = req.body;
-    if(!email || !password) 
-        return res.status(401).json({message:"Email or Password is reqiured"})
+const login = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password)
+        return res.status(401).json({ message: "Email or Password is reqiured" })
 
-    const user = await User.findOne({email});
-    if(!user){
-        return res.status(401).json({message:"User does not exist"})
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res.status(401).json({ message: "User does not exist" })
     }
-    
+
     const isPasswordMatch = await bcrypt.compare(password, user.password);
-    if(!isPasswordMatch) 
-        return res.status(401).json({message:"Email or password is Invalid"})
+    if (!isPasswordMatch)
+        return res.status(401).json({ message: "Email or password is Invalid" })
 
-     generateTokenAndSetCookie(res, user);
-     console.log(user)
-     
-     user.lastLogin=Date.now();
-     await user.save();
-     res.status(200).json({success:true, message:"User Logged in successfully"})
-    
+    generateTokenAndSetCookie(res, user);
+    console.log(user)
+
+    user.lastLogin = Date.now();
+    await user.save();
+    res.status(200).json({ success: true, message: "User Logged in successfully" })
+
 
 })
 
 
-const logout = asyncHandler(async(req,res)=>{
+const logout = asyncHandler(async (req, res) => {
     res.clearCookie("token");
-    res.status(200).json({message:"Logout Successfully"})
+    res.status(200).json({ message: "Logout Successfully" })
 })
 
-const forgotPassword = asyncHandler(async(req,res)=>{
-    const {email} = req.body;
-    const user = await User.findOne({email});
-    if(!user) return res.status(403).json({message:"user does not exits"});
+const forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(403).json({ message: "user does not exits" });
 
     const resetPasswordToken = crypto.randomBytes(20).toString("hex");
-    const resetPasswordExpiresDate = new Date(Date.now () + 1 * 60 *60 * 1000);
+    const resetPasswordExpiresDate = new Date(Date.now() + 1 * 60 * 60 * 1000);
 
     user.resetPasswordToken = resetPasswordToken;
     user.resetPasswordExpiresDate = resetPasswordExpiresDate;
@@ -176,16 +176,16 @@ const forgotPassword = asyncHandler(async(req,res)=>{
 
     await sendPasswordResetEmail(email, user.fullName, `${process.env.CLIENT_URL}/reset-password/${resetPasswordToken}`);
 
-    res.status(200).json({success:true, message:`Reset Password sent to ${email}`});
-    
+    res.status(200).json({ success: true, message: `Reset Password sent to ${email}` });
+
 })
 
-const resetPassword = asyncHandler(async (req,res) => {
-    const {token} = req.params;
-    const {password} = req.body;
+const resetPassword = asyncHandler(async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
 
-    const user = await User.findOne({resetPasswordToken:token, resetPasswordExpiresDate:{ $gte: Date.now()}});
-    if(!user) return res.status(404).json({message:"User Not Found"});
+    const user = await User.findOne({ resetPasswordToken: token, resetPasswordExpiresDate: { $gte: Date.now() } });
+    if (!user) return res.status(404).json({ message: "User Not Found" });
 
     const hashpassword = await bcrypt.hash(password, 8);
     user.password = hashpassword;
@@ -194,17 +194,26 @@ const resetPassword = asyncHandler(async (req,res) => {
     await user.save();
 
     await sendResetSuccessfullEmail(user.email)
-    res.status(200).json({message:"password reset succesfully"})
+    res.status(200).json({ message: "password reset succesfully" })
 
 })
 
-const checkAuth = asyncHandler(async (req,res)=>{
-    const user = await User.findById(req.user.userId).select("-password");
-    if(!user) return res.status(401).json({message:"User not found"});
-    res.status(200).json({success:true,user})
-})
+const checkAuth = async (req, res) => {
+    try {
 
-export { register, verifyEmail,login,forgotPassword,resetPassword,checkAuth,logout, editUser}
+        const user = await User.findById(req.user.userId).select("-password");
+        console.log("User:", user);
+        if (!user) return res.status(401).json({ message: "User not found" });
+
+        res.status(200).json({ success: true, user })
+    } catch (error) {
+        console.error("Error in checkAuth:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+
+}
+
+export { register, verifyEmail, login, forgotPassword, resetPassword, checkAuth, logout, editUser }
 
 
 
