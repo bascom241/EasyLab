@@ -27,7 +27,8 @@ interface AuthState {
   verifyEmail: (data: object, router:any) => Promise<void>;
   checkAuth: () => Promise<void>;
   editProfile: (formData: object, id: string) => Promise<void>;
-  
+  editingUser: boolean;
+  initialize: () => Promise<void>;
   // Token management
   setToken: (token: string) => void;
   clearAuth: () => void;
@@ -40,6 +41,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isVerifyingEmail: false,
   authUser: null,
   token: localStorage.getItem('token') || null,
+  editingUser: false,
 
   // Initialize auth check on store creation
   initialize: async () => {
@@ -139,7 +141,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   editProfile: async (formData, id) => {
     try {
-    //   set({ editingUser: true });
+      set({ editingUser: true });
       const response = await axiosInstance.put(`/edit-user/${id}`, formData);
       set({ authUser: response.data.user });
       toast.success('Profile updated');
@@ -147,7 +149,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       toast.error(err.response?.data?.message || 'Update failed');
       throw err;
     } finally {
-    //   set({ editingUser: false });
+      set({ editingUser: false });
     }
   },
 
