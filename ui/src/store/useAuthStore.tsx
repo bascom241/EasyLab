@@ -1,3 +1,4 @@
+// useAuthStore.ts
 import { create } from 'zustand';
 import { axiosInstance } from '@/lib/axios';
 import { toast } from 'sonner';
@@ -19,16 +20,17 @@ interface AuthState {
   isVerifyingEmail: boolean;
   authUser: AuthUser | null;
   token: string | null;
-  
+
   // Actions
   signUp: (formData: object, nextStep: () => void) => Promise<void>;
   login: (formData: object) => Promise<boolean>;
   logout: () => Promise<void>;
-  verifyEmail: (data: object, router:any) => Promise<void>;
+  verifyEmail: (data: object, router: any) => Promise<void>;
   checkAuth: () => Promise<void>;
   editProfile: (formData: object, id: string) => Promise<void>;
   editingUser: boolean;
   initialize: () => Promise<void>;
+
   // Token management
   setToken: (token: string) => void;
   clearAuth: () => void;
@@ -40,13 +42,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isLogin: false,
   isVerifyingEmail: false,
   authUser: null,
-  token: localStorage.getItem('token') || null,
+  token: null,  // initially null for SSR
+
   editingUser: false,
 
-  // Initialize auth check on store creation
   initialize: async () => {
-    if (get().token) {
-      await get().checkAuth();
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token) {
+        set({ token });
+        await get().checkAuth();
+      }
     }
     set({ checkingAuth: false });
   },
@@ -69,15 +75,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ isLogin: true });
       const response = await axiosInstance.post('/login', formData);
-      
-      // Store token and user data
-      localStorage.setItem('token', response.data.token);
-      set({ 
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', response.data.token);
+      }
+
+      set({
         authUser: response.data.user,
         token: response.data.token,
-        isLogin: false
       });
-      
+
       toast.success('Login successful');
       return true;
     } catch (err: any) {
@@ -97,40 +104,33 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       toast.error(err.response?.data?.message || 'Logout failed');
     }
   },
-   verifyEmail: async (data: object, router: any) => {
-        set({ isVerifyingEmail: true })
-        try {
-            console.log(data)
-            const response = await axiosInstance.post("/verify-email", data);
 
-            console.log(response.data.message);
-            router.push("/dashboard")
-            set({ isVerifyingEmail: false })
-        } catch (err) {
-            set({ isVerifyingEmail: false })
-            if (err instanceof Error) {
-                toast.error((err as any).response.data.message);
-            } else {
-                toast.error("Something went wrong")
-            }
-        } finally {
-            set({ isVerifyingEmail: false });
-        }
-    },
+  verifyEmail: async (data, router) => {
+    set({ isVerifyingEmail: true });
+    try {
+      const response = await axiosInstance.post('/verify-email', data);
+      router.push('/dashboard');
+      toast.success(response.data.message);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Verification failed');
+    } finally {
+      set({ isVerifyingEmail: false });
+    }
+  },
+
   checkAuth: async () => {
     try {
       const token = get().token;
+
       if (!token) {
         set({ checkingAuth: false });
         return;
       }
 
       const response = await axiosInstance.get('/check-auth', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       set({ authUser: response.data.user });
     } catch (err) {
       get().clearAuth();
@@ -153,16 +153,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  setToken: (token: string) => {
-    localStorage.setItem('token', token);
+  setToken: (token) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('token', token);
+    }
     set({ token });
   },
 
   clearAuth: () => {
-    localStorage.removeItem('token');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+    }
     set({ authUser: null, token: null });
-  }
+  },
 }));
-
-// Initialize auth store on app load
-useAuthStore.getState().checkAuth();
