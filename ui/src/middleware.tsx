@@ -1,12 +1,8 @@
+// middleware.js
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export default function middleware(req: NextRequest) {
-  const token = req.cookies.get("token")?.value || null;
-  console.log("Token:", token);
-  const isAuthenticated = token !== null;
-  console.log("Is Authenticated:", isAuthenticated);
-
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Skip static files, internal files, and API routes
@@ -19,13 +15,37 @@ export default function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  if (!isAuthenticated && pathname !== "/login" && pathname !== "/register" && !pathname.startsWith("/payment-success")) {
+  // Prepare a request to your backend check-auth route
+  const backendUrl = "https://easylab.onrender.com/api/check-auth";
+
+  try {
+    const response = await fetch(backendUrl, {
+      method: "GET",
+      headers: {
+        cookie: req.headers.get("cookie") || "",
+      },
+      credentials: "include",
+    });
+
+    const isAuthenticated = response.status === 200;
+
+    console.log("Is Authenticated:", isAuthenticated);
+
+    if (!isAuthenticated && pathname !== "/login" && pathname !== "/register" && !pathname.startsWith("/payment-success")) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+
+    if (isAuthenticated && (pathname === "/login" || pathname === "/register")) {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+
+    return NextResponse.next();
+  } catch (error) {
+    console.error("Auth check failed:", error);
     return NextResponse.redirect(new URL("/login", req.url));
   }
-
-  if (isAuthenticated && (pathname === "/login" || pathname === "/register")) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
-  }
-
-  return NextResponse.next();
 }
+
+export const config = {
+  matcher: ["/((?!_next|static|favicon.ico|api).*)"], // Match all except static/API
+};

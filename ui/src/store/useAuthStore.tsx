@@ -109,14 +109,18 @@ export const useAuthStore = create<AuthState>((set) => ({
         }
     },
 
-    checkAuth: async () => {
-        try {
-            const response = await axiosInstance.get("/check-auth");
-            set({ authUser: response.data.user });
-        } catch (err) {
-            set({ checkingAuth: false });
-        }
-    },
+  checkAuth: async () => {
+  try {
+    const response = await axiosInstance.get("/check-auth", {
+      withCredentials: true, // Critical for cross-site cookies
+    });
+    set({ authUser: response.data.user, checkingAuth: false });
+  } catch (err) {
+    console.error("CheckAuth error:", err);
+    set({ authUser: null, checkingAuth: false });
+  }
+},
+
     editProfile: async (formData: object, id: string) => {
         set({editingUser:true})
         try {
