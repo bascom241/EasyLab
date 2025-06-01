@@ -24,7 +24,7 @@ interface AuthState {
   signUp: (formData: object, nextStep: () => void) => Promise<void>;
   login: (formData: object) => Promise<boolean>;
   logout: () => Promise<void>;
-  verifyEmail: (data: object) => Promise<void>;
+  verifyEmail: (data: object, router:any) => Promise<void>;
   checkAuth: () => Promise<void>;
   editProfile: (formData: object, id: string) => Promise<void>;
   
@@ -95,20 +95,26 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       toast.error(err.response?.data?.message || 'Logout failed');
     }
   },
+   verifyEmail: async (data: object, router: any) => {
+        set({ isVerifyingEmail: true })
+        try {
+            console.log(data)
+            const response = await axiosInstance.post("/verify-email", data);
 
-  verifyEmail: async (data) => {
-    try {
-      set({ isVerifyingEmail: true });
-      await axiosInstance.post('/verify-email', data);
-      toast.success('Email verified successfully');
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Verification failed');
-      throw err;
-    } finally {
-      set({ isVerifyingEmail: false });
-    }
-  },
-
+            console.log(response.data.message);
+            router.push("/dashboard")
+            set({ isVerifyingEmail: false })
+        } catch (err) {
+            set({ isVerifyingEmail: false })
+            if (err instanceof Error) {
+                toast.error((err as any).response.data.message);
+            } else {
+                toast.error("Something went wrong")
+            }
+        } finally {
+            set({ isVerifyingEmail: false });
+        }
+    },
   checkAuth: async () => {
     try {
       const token = get().token;
