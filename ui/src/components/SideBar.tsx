@@ -7,7 +7,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useRouter } from "next/navigation";
+
 import { useState } from "react";
 import useNotification from "@/store/useAuthNotification";
 
@@ -21,7 +21,7 @@ const SideBar = ({ isOpen, isMobile, onClose }: SideBarProps) => {
   const pathName = usePathname();
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const { logout } = useAuthStore();
-  const router = useRouter();
+
   const { notifications,fetchNotifications } = useNotification();
   
   useEffect(()=> {
@@ -30,7 +30,7 @@ const SideBar = ({ isOpen, isMobile, onClose }: SideBarProps) => {
   const unreadCount = notifications?.filter(notif => !notif.isRead).length || 0;
 
   const handleLogout = () => {
-    logout(router);
+    logout();
   };
 
   // Icon colors for each menu item
