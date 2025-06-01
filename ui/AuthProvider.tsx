@@ -7,7 +7,7 @@ import { Loader } from 'lucide-react';
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const initialize = useAuthStore((state) => state.initialize);
   const checkingAuth = useAuthStore((state) => state.checkingAuth);
-
+    console.log(initialize, checkingAuth);
   useEffect(() => {
     initialize();
   }, [initialize]);

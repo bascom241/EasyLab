@@ -50,7 +50,7 @@ const Login2 = () => {
         const success = await login(formData);
         if (success) {
         
-           window.location.href = "/dashboard";
+           window.location.href = "/";
         }else{
             toast.error("Cant Login")
         }
