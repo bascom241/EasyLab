@@ -23,9 +23,9 @@ interface FormPage1Props {
 
 const FormPage1: React.FC<FormPage1Props> = ({ progress, formData, setFormData, handleFormChange, nextStep }) => {
     return (
-        <main className='w-full h-screen max-h-screen  max-w-full flex pt-16 overflow-hidden'>
+        <main className='w-full h-screen max-h-screen  max-w-full flex pt-16 sm:px-12 px-3 overflow-hidden'>
 
-            <section className='w-1/2 h-auto min-h-[626px] flex flex-col mb-[14px] max-w-1/2 gap-2 p-[30px_0_0_120px] '>
+            <section className='w-full h-auto min-h-[626px] flex flex-col mb-[14px]  gap-2 p-[30px_0_0_120px] '>
                 <div className=' '>
                     <h1 className='text-3xl font-bold w-[538px] h-[32px] leading-[100%]'>Welcome to <span className='text-[#01368B]'>Easy Lab</span> </h1>
                     <p className='font-semibold w-[533px] h-[24px]'>Personal information</p>
@@ -85,7 +85,7 @@ const FormPage1: React.FC<FormPage1Props> = ({ progress, formData, setFormData, 
             </section>
 
 
-
+{/* 
             <section className='sm:flex hidden w-1/2 max-w-1/2 h-screen max-h-screen relative overflow-hidden'>
                 <Image
                     src={lab}
@@ -94,7 +94,7 @@ const FormPage1: React.FC<FormPage1Props> = ({ progress, formData, setFormData, 
                     objectFit='cover'
                     className='absolute inset-0'
                 />
-            </section>
+            </section> */}
 
 
         </main>
