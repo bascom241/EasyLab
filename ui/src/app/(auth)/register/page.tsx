@@ -116,6 +116,7 @@ const Register = () => {
                         progress={progress}
                         nextStep={nextStep}
                         handleSubmit={handleSumit}
+                          isSignUp={isSignUp}
                     />
                 )}
 
@@ -123,7 +124,7 @@ const Register = () => {
                     <FormPage5
                         progress={progress}
                         handleSubmit={handleSumit}
-                        isSignUp={isSignUp}
+                      
                     />
                 )}
 
