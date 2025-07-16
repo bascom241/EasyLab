@@ -35,7 +35,7 @@ const FormPage2: React.FC<FormPage1Props> = ({ progress, formData, setFormData, 
         <main className='w-full h-screen flex pt-16 overflow-hidden'>
 
             {/* Left Section (Form) */}
-            <section className='w-1/2 flex flex-col gap-2 p-[30px_0_0_120px]'>
+            <section className='w-1/2 flex flex-col gap-2 '>
                 <div className=''>
                     <h1 className='text-2xl font-semibold w-[538px] h-[32px] leading-[100%]'>Join easy lab for a new era of <span className='text-[#01368B]'>Lab management</span> </h1>
                     <p className='font-semibold w-[533px] h-[24px]'>Faculty Details</p>
@@ -128,7 +128,7 @@ const FormPage2: React.FC<FormPage1Props> = ({ progress, formData, setFormData, 
             </section>
 
             {/* Right Section (Image) */}
-            <section className='w-1/2 h-screen sticky top-0 overflow-hidden'>
+{/*             <section className='w-1/2 h-screen sticky top-0 overflow-hidden'>
                 <Image
                     src={lab}
                     alt='Woman working in a laboratory'
@@ -136,7 +136,7 @@ const FormPage2: React.FC<FormPage1Props> = ({ progress, formData, setFormData, 
                     objectFit='cover'
                     className='absolute inset-0'
                 />
-            </section>
+            </section> */}
         </main>
     )
 }
