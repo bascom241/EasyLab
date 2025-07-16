@@ -123,7 +123,7 @@ const Login2 = () => {
                 </div>
 
                 <div className="flex flex-col items-center justify-center text-sm">
-                    <div className="flex gap-2 items-center">
+{/*                     <div className="flex gap-2 items-center"> */}
 {/*                         <input
                             type="checkbox"
                             checked={termsAccepted}
