@@ -86,7 +86,7 @@ const FormPage1: React.FC<FormPage1Props> = ({ progress, formData, setFormData, 
 
 
 
-            <section className='w-1/2 max-w-1/2 h-screen max-h-screen relative overflow-hidden'>
+            <section className='sm:flex hidden w-1/2 max-w-1/2 h-screen max-h-screen relative overflow-hidden'>
                 <Image
                     src={lab}
                     alt='Woman working in a laboratory'
