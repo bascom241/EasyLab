@@ -24,7 +24,8 @@ const io = new Server(server, {
   cors: {
     origin: [
       "https://easy-lab-ui.onrender.com", 
-      "http://localhost:3000"
+      "http://localhost:3000",
+      "https://easy-lab-ebon.vercel.app"
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"]
@@ -49,7 +50,8 @@ app.use(express.json());
 const corsOptions = {
   origin: [
     "https://easy-lab-ui.onrender.com",
-    "http://localhost:3000" 
+    "http://localhost:3000" ,
+          "https://easy-lab-ebon.vercel.app"
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
