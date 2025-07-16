@@ -18,7 +18,7 @@ const Register = () => {
     const { currentStep, nextStep, prevStep } = useStepContext();
     const totalSteps = 5;
     const progress = currentStep / totalSteps * 100;
-    const { signUp } = useAuthStore();
+    const { signUp,isSignUp } = useAuthStore();
 
 
     const [formData, setFormData] = useState(
@@ -123,6 +123,7 @@ const Register = () => {
                     <FormPage5
                         progress={progress}
                         handleSubmit={handleSumit}
+                        isSignUp={isSignUp}
                     />
                 )}
 
