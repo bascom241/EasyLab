@@ -1,7 +1,7 @@
-'use client'
-import React from 'react'
+'use client';
+import React from 'react';
 import { ArrowRight } from 'lucide-react';
-import { toast } from "sonner"
+import { toast } from "sonner";
 
 interface FormPage4Props {
   progress: number;
@@ -19,48 +19,55 @@ const FormPage4: React.FC<FormPage4Props> = ({ progress, nextStep, handleSubmit 
       console.log(error);
       toast.error((error as any)?.response?.data?.message || "An error occurred");
     }
-  }
+  };
 
   return (
-    <main className='w-full flex flex-col h-screen items-center pt-16 overflow-hidden px-16'>
-      <div className='mt-8 w-full'>
-        <h1 className='mb-4 text-2xl font-semibold w-full h-[32px] leading-[100%] text-center'>
-          Simple Sign Up <span className='text-[#01368B]'>Powerful Results</span>
+    <main className="w-full h-screen flex flex-col items-center pt-16 px-6 sm:px-12 lg:px-24 overflow-hidden">
+      {/* Header */}
+      <div className="w-full max-w-3xl">
+        <h1 className="mb-4 text-xl sm:text-2xl font-semibold text-center">
+          Simple Sign Up <span className="text-[#01368B]">Powerful Results</span>
         </h1>
-        <div className="bg-gray-300 w-full rounded-full h-1.5 mb-[10px]">
-          <div className="bg-[#01368B] h-1.5 rounded-full transition-all duration-300" style={{ width: `${progress}%` }}></div>
-        </div>
-        <div className='bg-gray-100 h-screen w-full'>
-          <div className='flex items-center justify-center w-full gap-5 py-4'>
-            <h1 className='text-2xl'>TERMS AND CONDITIONS</h1>
-            <div className='bg-[#F3FCF8] flex items-center justify-center h-[25px] w-[85px] text-[#0B9658] text-[0.7rem] border-inherit p-2 rounded-full'>
-              <p>Please Read</p>
-            </div>
-          </div>
-          <div className='mt-3 w-full px-8'>
-            <p className='mb-4 font-bold'>Instructions</p>
-            <ul className='list-disc flex flex-col gap-3 text-[0.85rem]'>
-              <li>By accessing or using Easy Lab ("the Platform"), you agree to comply with and be bound by these Terms and Conditions.</li>
-              <li>You may not reproduce, modify, distribute, transmit, display, perform, or otherwise use the Platform's content without written consent.</li>
-              <li>No event shall Easy Lab be liable for damages arising from use of the Platform.</li>
-              <li>Easy Lab may suspend your account without prior notice.</li>
-              <li>Easy Lab may modify these Terms at any time.</li>
-            </ul>
-          </div>
 
-          <div className='w-full flex items-center justify-center gap-4 mt-4 mb-8'>
-            <button
-              className='bg-[#01368B] w-1/2 flex items-center justify-center gap-3 text-white p-2 rounded-md'
-              onClick={handleButtonClick}
-            >
-              <p>Complete</p>
-              <ArrowRight size={24} />
-            </button>
-          </div>
+        {/* Progress Bar */}
+        <div className="bg-gray-300 w-full rounded-full h-2 mb-6">
+          <div className="bg-[#01368B] h-2 rounded-full transition-all duration-300" style={{ width: `${progress}%` }}></div>
         </div>
       </div>
+
+      {/* Terms Section */}
+      <section className="w-full max-w-3xl bg-gray-100 rounded-xl p-6 sm:p-10 flex flex-col gap-6 h-full overflow-auto">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+          <h2 className="text-lg sm:text-2xl font-semibold">Terms and Conditions</h2>
+          <div className="bg-[#F3FCF8] text-[#0B9658] text-xs px-4 py-1 rounded-full border border-[#0B9658]">
+            Please Read
+          </div>
+        </div>
+
+        <div>
+          <p className="font-bold mb-2">Instructions</p>
+          <ul className="list-disc list-inside space-y-3 text-sm leading-relaxed text-gray-700">
+            <li>By accessing or using Easy Lab ("the Platform"), you agree to comply with and be bound by these Terms and Conditions.</li>
+            <li>You may not reproduce, modify, distribute, transmit, display, perform, or otherwise use the Platform's content without written consent.</li>
+            <li>No event shall Easy Lab be liable for damages arising from use of the Platform.</li>
+            <li>Easy Lab may suspend your account without prior notice.</li>
+            <li>Easy Lab may modify these Terms at any time.</li>
+          </ul>
+        </div>
+
+        {/* Submit Button */}
+        <div className="w-full mt-auto">
+          <button
+            className="bg-[#01368B] hover:bg-[#0d47a1] transition-all w-full sm:w-1/2 mx-auto flex items-center justify-center gap-2 text-white py-3 rounded-md"
+            onClick={handleButtonClick}
+          >
+            <span>Complete</span>
+            <ArrowRight size={20} />
+          </button>
+        </div>
+      </section>
     </main>
-  )
-}
+  );
+};
 
 export default FormPage4;
