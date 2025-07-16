@@ -21,7 +21,7 @@ const Login1:React.FC<Login1Prop> = ({nextStep}) => {
         <main className="w-full h-screen flex  flex-col items-center justify-center gap-8 bg-white pt-16">
             {/* Box 1 */}
 
-            <div className="flex items-center gap-4 justify-center">
+            <div className="flex-col sm:flex items-center gap-4 justify-center">
 
 
                 <div
