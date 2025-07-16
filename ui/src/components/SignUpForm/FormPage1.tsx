@@ -25,7 +25,7 @@ const FormPage1: React.FC<FormPage1Props> = ({ progress, formData, setFormData, 
     return (
         <main className='w-full h-screen max-h-screen  max-w-full flex pt-16 sm:px-12 px-3 overflow-hidden'>
 
-            <section className='w-full h-auto min-h-[626px] flex flex-col mb-[14px]  gap-2 p-[30px_0_0_120px] '>
+            <section className='w-full h-auto min-h-[626px] flex flex-col mb-[14px]  gap-2'>
                 <div className=' '>
                     <h1 className='text-3xl font-bold w-[538px] h-[32px] leading-[100%]'>Welcome to <span className='text-[#01368B]'>Easy Lab</span> </h1>
                     <p className='font-semibold w-[533px] h-[24px]'>Personal information</p>
