@@ -1,8 +1,6 @@
 'use client'
 import React, { useState } from 'react';
-import lab from '../../../assets/laboratory-worker-working-with-modern-microscope-while-conducting-coronavirus-research.jpg';
-import Image from 'next/image';
-import { ArrowRight, Check } from 'lucide-react'; // Import Check icon
+import { ArrowRight, Check } from 'lucide-react';
 
 interface FormPage1Props {
     progress: number;
@@ -25,29 +23,27 @@ interface FormPage1Props {
 const FormPage2: React.FC<FormPage1Props> = ({ progress, formData, setFormData, handleFormChange, nextStep }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-    // Handle option selection
     const handleOptionSelect = (value: string) => {
         setFormData({ ...formData, role: value });
         setIsDropdownOpen(false);
     };
 
     return (
-        <main className='w-full h-screen flex pt-16 overflow-hidden'>
-
-            {/* Left Section (Form) */}
-            <section className='w-1/2 flex flex-col gap-2 '>
-                <div className=''>
-                    <h1 className='text-2xl font-semibold w-[538px] h-[32px] leading-[100%]'>Join easy lab for a new era of <span className='text-[#01368B]'>Lab management</span> </h1>
-                    <p className='font-semibold w-[533px] h-[24px]'>Faculty Details</p>
+        <main className='w-full min-h-screen flex justify-center pt-20 px-4 sm:px-8'>
+            <section className='w-full max-w-xl flex flex-col gap-4'>
+                <div>
+                    <h1 className='text-2xl sm:text-3xl font-semibold leading-tight'>
+                        Join easy lab for a new era of <span className='text-[#01368B]'>Lab management</span>
+                    </h1>
+                    <p className='font-semibold'>Faculty Details</p>
                 </div>
 
-                <div className="bg-gray-300 w-[400px] rounded-full h-1.5 mb-[10px]">
-                    <div className="bg-[#01368B] h-1.5 rounded-full transition-all duration-300" style={{ width: `${progress}%` }}></div>
+                <div className="bg-gray-300 w-full rounded-full h-1.5">
+                    <div className="bg-[#01368B] h-1.5 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
                 </div>
 
-                {/* Facility Name and Facility Number Side by Side */}
-                <div className='flex gap-4 w-[400px]'>
-                    <div className='flex flex-col gap-0 flex-1 w-1/2'>
+                <div className='flex flex-col sm:flex-row gap-4'>
+                    <div className='flex flex-col flex-1'>
                         <label htmlFor='faculty'>Facility Name</label>
                         <input
                             name="facilityName"
@@ -56,26 +52,25 @@ const FormPage2: React.FC<FormPage1Props> = ({ progress, formData, setFormData, 
                             type='text'
                             value={formData.facilityName}
                             onChange={handleFormChange}
-                            className='border-2 border-gray-300 focus:outline-none focus:border-[#01368B] transition-all duration-300 rounded-md h-12 px-4 mb-4'
+                            className='border-2 border-gray-300 focus:border-[#01368B] focus:outline-none rounded-md h-12 px-4'
                         />
                     </div>
 
-                    <div className='flex flex-col gap-0 flex-1 w-1/2'>
-                        <label htmlFor='email'>Facility Number</label>
+                    <div className='flex flex-col flex-1'>
+                        <label htmlFor='facilityNumber'>Facility Number</label>
                         <input
-              
-                            id='email'
+                            id='facilityNumber'
                             placeholder='Facility Number'
                             name="facilityNumber"
                             type='text'
                             value={formData.facilityNumber}
                             onChange={handleFormChange}
-                            className='border-2 border-gray-300 focus:outline-none focus:border-[#01368B] transition-all duration-300 rounded-md h-12 px-4 mb-4'
+                            className='border-2 border-gray-300 focus:border-[#01368B] focus:outline-none rounded-md h-12 px-4'
                         />
                     </div>
                 </div>
 
-                <div className='flex flex-col gap-0 '>
+                <div className='flex flex-col'>
                     <label htmlFor='department'>Department</label>
                     <input
                         id='department'
@@ -84,26 +79,24 @@ const FormPage2: React.FC<FormPage1Props> = ({ progress, formData, setFormData, 
                         type='text'
                         value={formData.departmentName}
                         onChange={handleFormChange}
-                        className='border-2 border-gray-300 focus:outline-none focus:border-[#01368B] transition-all duration-300 rounded-md w-[400px] h-12 px-4 mb-4'
+                        className='border-2 border-gray-300 focus:border-[#01368B] focus:outline-none rounded-md h-12 px-4'
                     />
                 </div>
 
-                <div className='flex flex-col gap-0'>
+                <div className='flex flex-col'>
                     <label htmlFor='role'>Role</label>
-                    {/* Custom Dropdown */}
                     <div className='relative'>
                         <button
                             type='button'
                             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            className='border-2 border-gray-300 focus:outline-none focus:border-[#01368B] transition-all duration-300 rounded-md w-[400px] h-12 px-4 mb-4 text-left flex items-center justify-between'
+                            className='border-2 border-gray-300 focus:border-[#01368B] focus:outline-none rounded-md w-full h-12 px-4 text-left flex items-center justify-between'
                         >
                             {formData.role || 'Select Role'}
                             <span className={`transform transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}>▼</span>
                         </button>
 
-                        {/* Dropdown Options */}
                         {isDropdownOpen && (
-                            <div className='absolute bottom-16 z-10 w-[400px] bg-white border border-gray-300 rounded-md shadow-lg mt-1'>
+                            <div className='absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1'>
                                 {['admin', 'scientist', 'Receptionist'].map((option) => (
                                     <div
                                         key={option}
@@ -119,26 +112,18 @@ const FormPage2: React.FC<FormPage1Props> = ({ progress, formData, setFormData, 
                     </div>
                 </div>
 
-                <div className='w-[400px] flex justify-center gap-4 mb-8'>
-                    <button className='bg-[#01368B] w-1/2 flex items-center justify-center gap-3 text-white p-2 rounded-md' onClick={nextStep}>
+                <div className='w-full flex justify-center mt-4 mb-8'>
+                    <button
+                        className='bg-[#01368B] w-1/2 min-w-[150px] flex items-center justify-center gap-3 text-white p-2 rounded-md'
+                        onClick={nextStep}
+                    >
                         <p>Next</p>
                         <ArrowRight size={24} />
                     </button>
                 </div>
             </section>
-
-            {/* Right Section (Image) */}
-{/*             <section className='w-1/2 h-screen sticky top-0 overflow-hidden'>
-                <Image
-                    src={lab}
-                    alt='Woman working in a laboratory'
-                    layout='fill'
-                    objectFit='cover'
-                    className='absolute inset-0'
-                />
-            </section> */}
         </main>
-    )
+    );
 }
 
 export default FormPage2;
