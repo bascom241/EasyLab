@@ -91,6 +91,16 @@ const FormPage1: React.FC<FormPage1Props> = ({ progress, formData, setFormData, 
                         <ArrowRight size={24} />
                     </button>
                 </div>
+
+                {/* Login Redirect */}
+                <div className='w-full text-center mt-6'>
+                    <button
+                        onClick={() => (window.location.href = '/login')}
+                        className='text-[#01368B] border border-[#01368B] px-4 py-2 rounded-md hover:bg-[#01368B] hover:text-white transition-colors duration-200 w-full sm:w-auto'
+                    >
+                        Already have an account? Please log in
+                    </button>
+                </div>
             </section>
         </main>
     )
