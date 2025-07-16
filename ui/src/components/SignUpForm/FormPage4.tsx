@@ -1,15 +1,16 @@
 'use client';
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader } from 'lucide-react';
 import { toast } from "sonner";
 
 interface FormPage4Props {
   progress: number;
   nextStep: () => void;
   handleSubmit: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
+  isSignUp:boolean
 }
 
-const FormPage4: React.FC<FormPage4Props> = ({ progress, nextStep, handleSubmit }) => {
+const FormPage4: React.FC<FormPage4Props> = ({ progress, nextStep, handleSubmit , isSignUp}) => {
 
   const handleButtonClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
@@ -61,8 +62,9 @@ const FormPage4: React.FC<FormPage4Props> = ({ progress, nextStep, handleSubmit 
             className="bg-[#01368B] hover:bg-[#0d47a1] transition-all w-full sm:w-1/2 mx-auto flex items-center justify-center gap-2 text-white py-3 rounded-md"
             onClick={handleButtonClick}
           >
-            <span>Complete</span>
-            <ArrowRight size={20} />
+            {
+              isSignUp? <Loader className="animate-spin"/> : <span>Sign Up</span>
+            }
           </button>
         </div>
       </section>
