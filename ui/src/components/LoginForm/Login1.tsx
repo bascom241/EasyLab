@@ -25,7 +25,7 @@ const Login1:React.FC<Login1Prop> = ({nextStep}) => {
 
 
                 <div
-                    className={`w-72 h-64 relative flex items-center flex-col gap-4 justify-center rounded-md border-2 transition-all duration-300 cursor-pointer 
+                    className={`w-72 h-64 relative flex items-center mb:3 flex-col gap-4 justify-center rounded-md border-2 transition-all duration-300 cursor-pointer 
           ${selected === "box1" ? "border-green-500 bg-white" : "border-gray-100 bg-gray-100"}`}
                     onClick={() => handleClick("box1")}
                 >
