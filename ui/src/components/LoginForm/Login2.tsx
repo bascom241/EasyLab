@@ -8,7 +8,7 @@ import { toast } from "sonner";
 
 const Login2 = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
-    const [termsAccepted, setTermsAccepted] = useState(false);
+    // const [termsAccepted, setTermsAccepted] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
     const { login, isLogin } = useAuthStore();
@@ -35,10 +35,10 @@ const Login2 = () => {
             toast.error("Password must be at least 6 characters long");
             return false;
         }
-        if (!termsAccepted) {
-            toast.error("You must accept the terms and privacy policy.");
-            return false;
-        }
+        // if (!termsAccepted) {
+        //     toast.error("You must accept the terms and privacy policy.");
+        //     return false;
+        // }
 
         return true;
     };
@@ -61,7 +61,7 @@ const Login2 = () => {
         <main className="w-full sm:w-full bg-white flex flex-col items-center justify-center pt-16">
             <form
                 onSubmit={handleSubmit}
-                className="flex flex-col w-full sm:w-1/2 gap-4 bg-[#FAFAFA] py-4 px:6 sm:px-12"
+                className="flex flex-col w-full sm:w-1/2 gap-4 bg-[#FAFAFA] py-4 px-4 sm:px-12"
             >
                 <h1 className="text-xl sm:text-2xl font-semibold items-center">
                     🤝 Welcome Back to Easy Lab
@@ -124,7 +124,7 @@ const Login2 = () => {
 
                 <div className="flex flex-col items-center justify-center text-sm">
                     <div className="flex gap-2 items-center">
-                        <input
+{/*                         <input
                             type="checkbox"
                             checked={termsAccepted}
                             onChange={(e) => setTermsAccepted(e.target.checked)}
@@ -136,7 +136,7 @@ const Login2 = () => {
                     </div>
                     <p>
                         and <span className="text-[#01368B]">Privacy Policy</span>
-                    </p>
+                    </p> */}
                     <p>
                         Don't have an account?{" "}
                         <Link href="/register" className="text-[#01368B]">
