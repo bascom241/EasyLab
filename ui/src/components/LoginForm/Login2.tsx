@@ -61,9 +61,9 @@ const Login2 = () => {
         <main className="w-full sm:w-full bg-white flex flex-col items-center justify-center pt-16">
             <form
                 onSubmit={handleSubmit}
-                className="flex flex-col w-full sm:w-1/2 gap-4 bg-[#FAFAFA] py-4 px-12"
+                className="flex flex-col w-full sm:w-1/2 gap-4 bg-[#FAFAFA] py-4 px:6 sm:px-12"
             >
-                <h1 className="text-2xl font-semibold items-center">
+                <h1 className="text-xl sm:text-2xl font-semibold items-center">
                     🤝 Welcome Back to Easy Lab
                 </h1>
                 <p className="font-semibold">Login</p>
